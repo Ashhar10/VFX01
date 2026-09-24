@@ -10,6 +10,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
     <ProjectCapability Include="Unity" />
+    <ProjectCapability Include="EnableOnDemandExcludedFolderLoading" />
   </ItemGroup>
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -35,7 +36,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <UnityProjectGenerator>Package</UnityProjectGenerator>
-    <UnityProjectGeneratorVersion>2.0.23</UnityProjectGeneratorVersion>
+    <UnityProjectGeneratorVersion>2.0.28</UnityProjectGeneratorVersion>
     <UnityProjectGeneratorStyle>SDK</UnityProjectGeneratorStyle>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
@@ -46,10 +47,28 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.59f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.59f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.59f2\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
-    <Analyzer Include="D:\Projects\Waheed\Attack VFX\Library\PackageCache\com.unity.pipeline@ab05e9cd7f74\Runtime\Analyzers\IlInterpreterAnalyzer.dll" />
+    <Analyzer Include="D:\Projects\Waheed\Attack VFX\VFX01\Library\PackageCache\com.unity.pipeline@ab05e9cd7f74\Runtime\Analyzers\IlInterpreterAnalyzer.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\VFX\Scripts\VFXInputTester.cs" />
+    <Compile Include="Assets\VFX\Scripts\GroundSlashVFX.cs" />
+    <Compile Include="Assets\VFX\Scripts\HolyGroundRingVFX.cs" />
+    <Compile Include="Assets\VFX\Scripts\VFXAnimationSync.cs" />
+    <Compile Include="Assets\VFX\Scripts\RotatingSmokeVFX.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\VFX\Scripts\SwordTrailVFX.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\VFX\Shaders\SoftHeatSmoke.shader" />
+    <None Include="Assets\VFX\Shaders\VerticalCrescent.shader" />
+    <None Include="Assets\VFX\Shaders\ScreenDistortionRing.shader" />
+    <None Include="Assets\VFX\Shaders\GroundFissure.shader" />
+    <None Include="Assets\VFX\Shaders\HolyGroundRing.shader" />
+    <None Include="Assets\VFX\Shaders\VerticalSunNeedles.shader" />
+    <None Include="Assets\VFX\Shaders\SwordSlashTrail.shader" />
+    <None Include="Assets\VFX\Shaders\GroundDecal.shader" />
+    <None Include="Assets\VFX\Shaders\AdditiveParticle.shader" />
+    <None Include="Assets\VFX\Shaders\NecromanticSmoke.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -537,7 +556,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
-      <HintPath>Library\PackageCache\com.unity.visualscripting@6279e2b7c485\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <HintPath>Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityPipeline.System.Runtime.CompilerServices.Unsafe">
@@ -1136,6 +1155,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.Pipeline.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.PlasticSCM.Editor.Assistant">
+      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.Assistant.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Collections">
       <HintPath>Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
       <Private>False</Private>
@@ -1160,12 +1183,16 @@
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Collections.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Collections.Editor.dll</HintPath>
+    <Reference Include="Unity.VisualEffectGraph.Runtime">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualEffectGraph.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-      <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+    <Reference Include="Unity.VisualEffectGraph.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualEffectGraph.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Collections.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Collections.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
@@ -1182,6 +1209,10 @@
     </Reference>
     <Reference Include="Unity.AI.Navigation.Updater">
       <HintPath>Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+      <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Pipeline.Editor">

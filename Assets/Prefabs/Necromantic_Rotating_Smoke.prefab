@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1000000000000000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1000000000000001}
+  - component: {fileID: 1000000000000002}
+  m_Layer: 0
+  m_Name: Necromantic_Rotating_Smoke
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1000000000000001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bada02d9e444ded94b29241717a90c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RotatingSmokeVFX
+  vortexRadius: 1.7
+  vortexHeight: 2.2
+  rotationSpeed: 55
+  upwardSpeed: 0.35
+  particleScale: 1
+  densityMultiplier: 1
+  deepCharcoalPurple: {r: 0.12, g: 0.05, b: 0.18, a: 0.35}
+  midtoneViolet: {r: 0.42, g: 0.18, b: 0.58, a: 0.45}
+  rimHighlightLilac: {r: 0.68, g: 0.35, b: 0.88, a: 0.6}
+  groundMistColor: {r: 0.1, g: 0.04, b: 0.15, a: 0.3}
+  necroticGreenColor: {r: 0.35, g: 1, b: 0.7, a: 1}
+  boneWhiteColor: {r: 0.92, g: 1, b: 0.98, a: 1}
+  enableBackdropFog: 1
+  enableVortexWisps: 1
+  enableGroundMist: 1
+  enableSoulOrbs: 1
+  enableEnergyMotes: 1
+  smokePlumeMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d5, type: 2}
+  smokeWispMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d6, type: 2}
+  soulOrbMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d7, type: 2}
+  energyMoteMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d8, type: 2}
