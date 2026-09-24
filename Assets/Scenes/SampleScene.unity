@@ -488,7 +488,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 467221931}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1047,7 +1047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1000000000000001, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.46501026
+      value: 0.604826
       objectReference: {fileID: 0}
     - target: {fileID: 1000000000000001, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1055,7 +1055,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1000000000000001, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.8853053
+      value: 0.79635775
       objectReference: {fileID: 0}
     - target: {fileID: 1000000000000001, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: m_LocalRotation.z
@@ -1093,7 +1093,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2099992121
 Transform:
   m_ObjectHideFlags: 0

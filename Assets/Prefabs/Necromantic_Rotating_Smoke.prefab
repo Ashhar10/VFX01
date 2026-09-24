@@ -50,12 +50,12 @@ MonoBehaviour:
   upwardSpeed: 0.35
   particleScale: 1
   densityMultiplier: 1
-  deepCharcoalPurple: {r: 0.12, g: 0.05, b: 0.18, a: 0.35}
-  midtoneViolet: {r: 0.42, g: 0.18, b: 0.58, a: 0.45}
-  rimHighlightLilac: {r: 0.68, g: 0.35, b: 0.88, a: 0.6}
-  groundMistColor: {r: 0.1, g: 0.04, b: 0.15, a: 0.3}
-  necroticGreenColor: {r: 0.35, g: 1, b: 0.7, a: 1}
-  boneWhiteColor: {r: 0.92, g: 1, b: 0.98, a: 1}
+  boneWhiteColor: {r: 0.96, g: 0.93, b: 0.88, a: 1}
+  midtoneViolet: {r: 0.75, g: 0.6, b: 0.9, a: 1}
+  deepCharcoalPurple: {r: 0.85, g: 0.78, b: 0.92, a: 1}
+  rimHighlightLilac: {r: 0.92, g: 0.86, b: 0.98, a: 1}
+  groundMistColor: {r: 0.9, g: 0.87, b: 0.85, a: 1}
+  necroticGreenColor: {r: 0.98, g: 0.95, b: 0.9, a: 1}
   enableBackdropFog: 1
   enableVortexWisps: 1
   enableGroundMist: 1
