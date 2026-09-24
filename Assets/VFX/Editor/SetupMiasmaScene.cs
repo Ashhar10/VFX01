@@ -31,18 +31,18 @@ public static class SetupMiasmaScene
 
             SerializedObject so = new SerializedObject(smoke);
             so.FindProperty("vortexRadius").floatValue = 1.7f;
-            so.FindProperty("vortexHeight").floatValue = 2.2f;
-            so.FindProperty("rotationSpeed").floatValue = 55f;
-            so.FindProperty("upwardSpeed").floatValue = 0.35f;
+            so.FindProperty("vortexHeight").floatValue = 2.4f;
+            so.FindProperty("rotationSpeed").floatValue = 60f;
+            so.FindProperty("upwardSpeed").floatValue = 0.40f;
             so.FindProperty("particleScale").floatValue = 1.0f;
             so.FindProperty("densityMultiplier").floatValue = 1.0f;
 
-            so.FindProperty("deepCharcoalPurple").colorValue = new Color(0.12f, 0.05f, 0.18f, 0.35f);
-            so.FindProperty("midtoneViolet").colorValue = new Color(0.42f, 0.18f, 0.58f, 0.45f);
-            so.FindProperty("rimHighlightLilac").colorValue = new Color(0.68f, 0.35f, 0.88f, 0.60f);
-            so.FindProperty("groundMistColor").colorValue = new Color(0.10f, 0.04f, 0.15f, 0.30f);
-            so.FindProperty("necroticGreenColor").colorValue = new Color(0.35f, 1.0f, 0.70f, 1.0f);
-            so.FindProperty("boneWhiteColor").colorValue = new Color(0.92f, 1.0f, 0.98f, 1.0f);
+            so.FindProperty("boneWhiteColor").colorValue = new Color(0.96f, 0.93f, 0.88f, 1.0f);
+            so.FindProperty("midtoneViolet").colorValue = new Color(0.75f, 0.60f, 0.90f, 1.0f);
+            so.FindProperty("deepCharcoalPurple").colorValue = new Color(0.85f, 0.78f, 0.92f, 1.0f);
+            so.FindProperty("rimHighlightLilac").colorValue = new Color(0.92f, 0.86f, 0.98f, 1.0f);
+            so.FindProperty("groundMistColor").colorValue = new Color(0.90f, 0.87f, 0.85f, 1.0f);
+            so.FindProperty("necroticGreenColor").colorValue = new Color(0.98f, 0.95f, 0.90f, 1.0f);
 
             so.FindProperty("enableBackdropFog").boolValue = true;
             so.FindProperty("enableVortexWisps").boolValue = true;
