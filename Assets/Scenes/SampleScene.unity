@@ -54982,22 +54982,6 @@ PrefabInstance:
       propertyPath: targetMiasmaFog
       value: 
       objectReference: {fileID: 1566902585}
-    - target: {fileID: 2902327972340834106, guid: 55f7e0bff18a423f855041e1dd11494b, type: 3}
-      propertyPath: m_LengthScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4300847986984133940, guid: 55f7e0bff18a423f855041e1dd11494b, type: 3}
-      propertyPath: m_LengthScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7153861400907024369, guid: 55f7e0bff18a423f855041e1dd11494b, type: 3}
-      propertyPath: VelocityModule.y.scalar
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7153861400907024369, guid: 55f7e0bff18a423f855041e1dd11494b, type: 3}
-      propertyPath: VelocityModule.radial.scalar
-      value: 0.1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

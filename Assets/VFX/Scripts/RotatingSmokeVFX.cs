@@ -434,7 +434,24 @@ public class RotatingSmokeVFX : MonoBehaviour
     private ParticleSystem crossSparklesPS;
 
     public float VortexRadius => vortexRadius;
+    public float VortexHeight => vortexHeight;
     public float RotationSpeed => rotationSpeed;
+    public float UpwardSpeed => upwardSpeed;
+    public float ParticleScale => particleScale;
+    public float DensityMultiplier => densityMultiplier;
+    public Color BoneWhiteColor => boneWhiteColor;
+    public Color MidtoneViolet => midtoneViolet;
+    public Color DeepCharcoalPurple => deepCharcoalPurple;
+    public Color RimHighlightLilac => rimHighlightLilac;
+    public Color GroundMistColor => groundMistColor;
+    public Color NecroticGreenColor => necroticGreenColor;
+    public float MoteOrbitMultiplier => moteOrbitMultiplier;
+    public float MoteTwinkleSpeed => moteTwinkleSpeed;
+    public Material SmokePlumeMaterial => smokePlumeMaterial;
+    public Material SmokeWispMaterial => smokeWispMaterial;
+    public Material SoulOrbMaterial => soulOrbMaterial;
+    public Material DiamondSparkleMaterial => diamondSparkleMaterial;
+    public Material CrossSparkleMaterial => crossSparkleMaterial;
 
     private void Awake()
     {
