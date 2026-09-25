@@ -16,8 +16,8 @@ public class RotatingSmokeVFXEditor : Editor
             fontSize = 13,
             alignment = TextAnchor.MiddleCenter
         };
-        EditorGUILayout.LabelField("🔮 Alura Graves - Miasma Smoke VFX", titleStyle);
-        EditorGUILayout.LabelField("Authentic Stage [1] Wind-up Necromantic Fog & Soul Motes", EditorStyles.centeredGreyMiniLabel);
+        EditorGUILayout.LabelField("🔮 Alura Graves - Necromantic Rotating Smoke VFX", titleStyle);
+        EditorGUILayout.LabelField("Volumetric Bone White & Lavender Clouds with Smooth Opacity Control", EditorStyles.centeredGreyMiniLabel);
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space(4);
 
@@ -46,66 +46,46 @@ public class RotatingSmokeVFXEditor : Editor
 
         EditorGUILayout.Space(6);
 
-        // Draw standard fields
-        DrawDefaultInspector();
-
-        EditorGUILayout.Space(6);
+        // Smooth Opacity & Fade Controls (Replaces legacy axis dissipation)
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField("💨 Stage [4] Fog Dissipation & Cloud Elimination (Image 4)", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox(
-            "Controls dynamic fog dissipation & cloud elimination along the specified axis (Image 4).\n" +
-            "• Dissipation Axis: Combined_Z_Sweep_And_Radial (sweeps +Z forward, deforms into tails, disperses and vanishes), " +
-            "Z_Axis_Forward, Vertical_Y (height cutoff), Radial_XZ (ground spread fade), or Both_Y_and_XZ.\n" +
-            "• Eliminate Clouds: Instant boolean toggle to eliminate tall volumetric clouds & wisps, leaving ground mist.\n" +
-            "• Progress Slider: 0 = full miasma vortex, 1 = fog dissipated / board returned to normal.",
-            MessageType.Info
-        );
+        EditorGUILayout.LabelField("🌫️ Master Opacity & Smooth Dissolve", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox("Controls smoke visibility smoothly from full opacity (1.0) to zero (0.0) without any axis distortion or stretching.", MessageType.None);
 
         EditorGUI.BeginChangeCheck();
-        float newSweepSpeed = EditorGUILayout.Slider("Z-Axis Sweep Speed", smoke.ZSweepSpeed, 0f, 15f);
-        bool newTailDeform = EditorGUILayout.Toggle("Enable Tail Deformation", smoke.EnableTailDeformation);
-        float newTailScale = EditorGUILayout.Slider("Tail Stretch (Velocity Scale)", smoke.TailDeformationScale, 0.5f, 6.0f);
-        float newTailLength = EditorGUILayout.Slider("Tail Length (Length Scale)", smoke.TailLengthScale, 0.5f, 5.0f);
+        float newOpacity = EditorGUILayout.Slider("Master Opacity", smoke.MasterOpacity, 0f, 1f);
         if (EditorGUI.EndChangeCheck())
         {
-            Undo.RecordObject(smoke, "Change Dissipation Settings");
-            smoke.ZSweepSpeed = newSweepSpeed;
-            smoke.EnableTailDeformation = newTailDeform;
-            smoke.TailDeformationScale = newTailScale;
-            smoke.TailLengthScale = newTailLength;
+            Undo.RecordObject(smoke, "Change Master Opacity");
+            smoke.MasterOpacity = newOpacity;
         }
 
-        EditorGUILayout.Space(4);
         EditorGUILayout.BeginHorizontal();
-        string cloudToggleText = smoke.EliminateClouds ? "☁️ Restore Clouds" : "❌ Eliminate Clouds (Instant)";
-        GUI.backgroundColor = smoke.EliminateClouds ? new Color(0.6f, 0.9f, 0.6f) : new Color(0.95f, 0.6f, 0.6f);
-        if (GUILayout.Button(cloudToggleText, GUILayout.Height(30)))
-        {
-            Undo.RecordObject(smoke, "Toggle Eliminate Clouds");
-            smoke.EliminateClouds = !smoke.EliminateClouds;
-        }
-
         GUI.backgroundColor = new Color(0.4f, 0.85f, 1.0f);
-        if (GUILayout.Button("💨 Trigger Z-Sweep Tail Dissipation", GUILayout.Height(30)))
+        if (GUILayout.Button("💨 Fade Out & Disappear", GUILayout.Height(28)))
         {
-            smoke.TriggerDissipation();
+            smoke.FadeOut(2.5f);
         }
 
         GUI.backgroundColor = new Color(0.9f, 0.9f, 0.9f);
-        if (GUILayout.Button("↺ Reset Full Fog", GUILayout.Height(30)))
+        if (GUILayout.Button("↺ Reset Full Opacity", GUILayout.Height(28)))
         {
-            Undo.RecordObject(smoke, "Reset Fog Dissipation");
-            smoke.ResetDissipation();
+            Undo.RecordObject(smoke, "Reset Opacity");
+            smoke.ResetOpacity();
         }
         GUI.backgroundColor = Color.white;
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(6);
+
+        // Draw standard fields
+        DrawDefaultInspector();
+
+        EditorGUILayout.Space(6);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.LabelField("✨ Layer 5: Sparkle Controls (User Friendly)", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
-            "Controls subtle energy motes and star twinkles (Images 2 & 3).\n" +
+            "Controls subtle energy motes and star twinkles.\n" +
             "• Sparkle Quantity: 0 = OFF, 5 = Delicate Ambient Twinkles (controls Diamond ◆ & Cross + together).\n" +
             "• Sparkle Size: controls the size of the twinkling star motes.",
             MessageType.None
@@ -171,12 +151,7 @@ public class RotatingSmokeVFXEditor : Editor
             so.FindProperty("sparkleQuantity").floatValue = 5.0f;
             so.FindProperty("sparkleSize").floatValue = 0.032f;
             so.FindProperty("sparkleBloomIntensity").floatValue = 2.5f;
-            so.FindProperty("eliminateClouds").boolValue = false;
-            so.FindProperty("enableDissipation").boolValue = false;
-            so.FindProperty("dissipationProgress").floatValue = 0f;
-            so.FindProperty("cloudHeightCutoff").floatValue = 2.4f;
-            so.FindProperty("dissipationRadialSpread").floatValue = 4.5f;
-            so.FindProperty("dissipationDuration").floatValue = 3.0f;
+            so.FindProperty("masterOpacity").floatValue = 1.0f;
             so.ApplyModifiedProperties();
             smoke.InitializeEffect();
             smoke.Play();
@@ -203,12 +178,7 @@ public class RotatingSmokeVFXEditor : Editor
             so.FindProperty("sparkleQuantity").floatValue = 3.0f;
             so.FindProperty("sparkleSize").floatValue = 0.025f;
             so.FindProperty("sparkleBloomIntensity").floatValue = 2.0f;
-            so.FindProperty("eliminateClouds").boolValue = false;
-            so.FindProperty("enableDissipation").boolValue = false;
-            so.FindProperty("dissipationProgress").floatValue = 0f;
-            so.FindProperty("cloudHeightCutoff").floatValue = 2.0f;
-            so.FindProperty("dissipationRadialSpread").floatValue = 4.0f;
-            so.FindProperty("dissipationDuration").floatValue = 3.0f;
+            so.FindProperty("masterOpacity").floatValue = 1.0f;
             so.ApplyModifiedProperties();
             smoke.InitializeEffect();
             smoke.Play();

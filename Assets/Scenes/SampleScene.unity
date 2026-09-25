@@ -49912,10 +49912,6 @@ PrefabInstance:
       value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
-      propertyPath: zSweepSpeed
-      value: 0.98
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: vortexHeight
       value: 0.63
       objectReference: {fileID: 0}
@@ -49950,18 +49946,6 @@ PrefabInstance:
     - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: sparkleBloomIntensity
       value: 0.04
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
-      propertyPath: dissipationDirection.x
-      value: 0.32998314
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
-      propertyPath: dissipationDirection.y
-      value: 0.04714045
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000000000000002, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
-      propertyPath: dissipationDirection.z
-      value: 0.942809
       objectReference: {fileID: 0}
     - target: {fileID: 2600363526080570092, guid: 55f7e0bff18a423f855041e1dd11493f, type: 3}
       propertyPath: ShapeModule.length
