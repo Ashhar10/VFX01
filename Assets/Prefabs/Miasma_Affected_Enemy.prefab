@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1000000000000001}
   - component: {fileID: 1000000000000002}
   m_Layer: 0
-  m_Name: Necromantic_Rotating_Smoke
+  m_Name: Miasma_Affected_Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,36 +41,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000000000000000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bada02d9e444ded94b29241717a90c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bada02d9e444ded94b29241717a90f1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RotatingSmokeVFX
-  vortexRadius: 1.7
-  vortexHeight: 2.2
-  rotationSpeed: 55
+  m_EditorClassIdentifier: Assembly-CSharp::MiasmaEnemyEffectVFX
+  bodyRadius: 0.65
+  bodyHeight: 1.8
+  swirlSpeed: 50
   upwardSpeed: 0.35
-  particleScale: 1
-  densityMultiplier: 1
-  boneWhiteColor: {r: 0.96, g: 0.93, b: 0.88, a: 1}
-  midtoneViolet: {r: 0.75, g: 0.6, b: 0.9, a: 1}
-  deepCharcoalPurple: {r: 0.85, g: 0.78, b: 0.92, a: 1}
-  rimHighlightLilac: {r: 0.92, g: 0.86, b: 0.98, a: 1}
-  groundMistColor: {r: 0.9, g: 0.87, b: 0.85, a: 1}
-  necroticGreenColor: {r: 0.98, g: 0.95, b: 0.9, a: 1}
-  enableBackdropFog: 1
-  enableVortexWisps: 1
-  enableGroundMist: 1
-  enableSoulOrbs: 1
+  enableSkullMask: 1
+  skullHeightOffset: 1.35
+  skullScale: 0.65
+  skullPulseSpeed: 2.5
+  skullColor: {r: 0.96, g: 0.98, b: 0.92, a: 0.95}
+  enableBodyMist: 1
+  mistDensity: 1
+  mistParticleScale: 0.9
+  enableWaistRing: 1
+  waistRingHeight: 0.85
+  waistRingRadius: 0.75
   enableSparkles: 1
   enableDiamondSparkles: 1
   enableCrossSparkles: 1
-  sparkleQuantity: 5
-  sparkleSize: 0.032
+  sparkleQuantity: 4
+  sparkleSize: 0.028
+  skullBloomIntensity: 3.5
   sparkleBloomIntensity: 2.5
-  moteOrbitMultiplier: 1.8
-  moteTwinkleSpeed: 90
+  boneWhiteColor: {r: 0.96, g: 0.93, b: 0.88, a: 1}
+  lavenderColor: {r: 0.75, g: 0.6, b: 0.9, a: 1}
+  spectralTint: {r: 0.78, g: 0.95, b: 0.82, a: 1}
+  skullMaterial: {fileID: 2100000, guid: b4a2c101d5e341209bcae01a884f1010, type: 2}
   smokePlumeMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d5, type: 2}
   smokeWispMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d6, type: 2}
-  soulOrbMaterial: {fileID: 2100000, guid: 4fbe3a31be8e47dda09ca323f77597d7, type: 2}
   diamondSparkleMaterial: {fileID: 2100000, guid: b4a2c101d5e341209bcae01a884f1013, type: 2}
   crossSparkleMaterial: {fileID: 2100000, guid: b4a2c101d5e341209bcae01a884f1014, type: 2}
   energyMoteMaterial: {fileID: 2100000, guid: b4a2c101d5e341209bcae01a884f1013, type: 2}
