@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -508,7 +508,9 @@ public class MiasmaEnemyEffectVFX : MonoBehaviour
         var vol = ps.velocityOverLifetime;
         vol.enabled = true;
         vol.space = ParticleSystemSimulationSpace.Local;
+        vol.x = 0f;
         vol.y = upwardSpeed;
+        vol.z = 0f;
         vol.orbitalY = swirlSpeed * Mathf.Deg2Rad * 0.7f;
         vol.radial = 0.02f;
 
@@ -583,7 +585,9 @@ public class MiasmaEnemyEffectVFX : MonoBehaviour
         var vol = ps.velocityOverLifetime;
         vol.enabled = true;
         vol.space = ParticleSystemSimulationSpace.Local;
+        vol.x = 0f;
         vol.y = 0.02f;
+        vol.z = 0f;
         vol.orbitalY = swirlSpeed * Mathf.Deg2Rad * 2.0f; // Fast sparkle orbit
 
         // Twinkle size curve (grow -> shrink -> grow for sparkle feel)
@@ -669,7 +673,9 @@ public class MiasmaEnemyEffectVFX : MonoBehaviour
         var vol = ps.velocityOverLifetime;
         vol.enabled = true;
         vol.space = ParticleSystemSimulationSpace.Local;
+        vol.x = 0f;
         vol.y = upwardSpeed * 0.8f;
+        vol.z = 0f;
         vol.orbitalY = swirlSpeed * Mathf.Deg2Rad * 1.8f; // Fast orbiting sparkles
         vol.radial = 0.02f;
 
@@ -756,7 +762,9 @@ public class MiasmaEnemyEffectVFX : MonoBehaviour
         var vol = ps.velocityOverLifetime;
         vol.enabled = true;
         vol.space = ParticleSystemSimulationSpace.Local;
+        vol.x = 0f;
         vol.y = upwardSpeed * 0.75f;
+        vol.z = 0f;
         vol.orbitalY = swirlSpeed * Mathf.Deg2Rad * 1.7f;
         vol.radial = 0.02f;
 
