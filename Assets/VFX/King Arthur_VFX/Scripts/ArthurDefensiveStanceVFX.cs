@@ -28,12 +28,31 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
     [Range(0.5f, 10f), Tooltip("HDR Bloom intensity multiplier")]
     public float bloomIntensity = 3.2f;
 
-    [Header("=== 1. Pentagon Geodesic Dome ===")]
+    [Header("=== 1. Pentagon Geodesic Dome Shield ===")]
     public bool enableDome = true;
-    public float domeRadius = 1.95f;
-    public float domeHeightOffset = 0.05f;
+    [Tooltip("Radius of the spherical forcefield bubble")]
+    public float domeRadius = 1.55f;
+    [Tooltip("Vertical center offset (0.95m aligns directly with King Arthur's chest)")]
+    public float domeHeightOffset = 0.95f;
     public float domeRotationSpeed = 8.0f;
-    [ColorUsage(true, true)] public Color domeColor = new Color(1.0f, 0.80f, 0.35f, 0.85f);
+    [ColorUsage(true, true), Tooltip("Core shield tint. Low alpha (~0.08) keeps King Arthur clearly visible")]
+    public Color domeColor = new Color(1.0f, 0.82f, 0.35f, 0.08f);
+
+    [Header("=== Dome Fresnel Rim & Hex/Pentagon Grid ===")]
+    [Range(0.5f, 8f), Tooltip("Fresnel sharpness (higher = concentrated on outer rim)")]
+    public float fresnelPower = 2.8f;
+    [Range(0.5f, 5f), Tooltip("Intensity of the glowing golden silhouette rim")]
+    public float fresnelIntensity = 2.2f;
+    [Range(0.0f, 0.4f), Tooltip("Center transparency so King Arthur is never washed out")]
+    public float centerAlpha = 0.06f;
+    [Range(0.2f, 1f), Tooltip("Edge silhouette opacity")]
+    public float rimAlpha = 0.85f;
+    [Tooltip("Honeycomb / Pentagon grid density across the sphere")]
+    public float gridTiling = 2.2f;
+    [Range(0.5f, 5f), Tooltip("Brightness of the golden grid lines")]
+    public float gridIntensity = 2.5f;
+    [Tooltip("Seamless 3D projection: eliminates all seams and polar pinching")]
+    public bool useTriplanar = true;
 
     [Header("=== 2. Floating Heater Shield ===")]
     public bool enableHeaterShield = true;
@@ -107,14 +126,14 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
             lastTheme = colorTheme;
             if (colorTheme == ShieldColorTheme.PinkRose)
             {
-                domeColor = new Color(1.0f, 0.35f, 0.75f, 0.85f);
+                domeColor = new Color(1.0f, 0.35f, 0.75f, 0.08f);
                 heaterShieldColor = new Color(1.0f, 0.45f, 0.85f, 1.0f);
                 sparkleColor = new Color(1.0f, 0.70f, 0.95f, 1.0f);
                 groundRingColor = new Color(0.95f, 0.30f, 0.70f, 0.90f);
             }
             else if (colorTheme == ShieldColorTheme.GoldenHoly)
             {
-                domeColor = new Color(1.0f, 0.80f, 0.35f, 0.85f);
+                domeColor = new Color(1.0f, 0.82f, 0.35f, 0.08f);
                 heaterShieldColor = new Color(1.0f, 0.85f, 0.45f, 1.0f);
                 sparkleColor = new Color(1.0f, 0.95f, 0.70f, 1.0f);
                 groundRingColor = new Color(1.0f, 0.80f, 0.35f, 0.90f);
@@ -155,7 +174,7 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
     {
         colorTheme = ShieldColorTheme.GoldenHoly;
         lastTheme = colorTheme;
-        domeColor = new Color(1.0f, 0.80f, 0.35f, 0.85f);
+        domeColor = new Color(1.0f, 0.82f, 0.35f, 0.08f);
         heaterShieldColor = new Color(1.0f, 0.85f, 0.45f, 1.0f);
         sparkleColor = new Color(1.0f, 0.95f, 0.70f, 1.0f);
         groundRingColor = new Color(1.0f, 0.80f, 0.35f, 0.90f);
@@ -167,7 +186,7 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
     {
         colorTheme = ShieldColorTheme.PinkRose;
         lastTheme = colorTheme;
-        domeColor = new Color(1.0f, 0.35f, 0.75f, 0.85f);
+        domeColor = new Color(1.0f, 0.35f, 0.75f, 0.08f);
         heaterShieldColor = new Color(1.0f, 0.45f, 0.85f, 1.0f);
         sparkleColor = new Color(1.0f, 0.70f, 0.95f, 1.0f);
         groundRingColor = new Color(0.95f, 0.30f, 0.70f, 0.90f);
@@ -218,17 +237,39 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
 
     private Material GetOrLoadMaterial(ref Material matField, string assetPath, string textureName, Color baseColor, Color emissionColor, Vector2? tiling = null)
     {
+        bool isDome = (assetPath == DOME_MAT_PATH);
+        Shader customShieldShader = isDome ? Shader.Find("VFX/King Arthur/Defense Shield") : null;
+
         if (matField != null && matField.shader != null && matField.shader.name != "Hidden/InternalErrorShader")
         {
-            if (matField.shader.name == "Universal Render Pipeline/Unlit")
+            if (isDome && customShieldShader != null && matField.shader != customShieldShader)
+            {
+                matField.shader = customShieldShader;
+            }
+            else if (!isDome && matField.shader.name == "Universal Render Pipeline/Unlit")
             {
                 Shader s = Shader.Find("Universal Render Pipeline/Particles/Unlit");
                 if (s != null) matField.shader = s;
             }
+
             matField.EnableKeyword("_EMISSION");
             matField.SetColor("_BaseColor", baseColor);
             matField.SetColor("_Color", baseColor);
             matField.SetColor("_EmissionColor", emissionColor);
+
+            if (isDome)
+            {
+                if (matField.HasProperty("_RimColor")) matField.SetColor("_RimColor", emissionColor);
+                if (matField.HasProperty("_BloomMultiplier")) matField.SetFloat("_BloomMultiplier", bloomIntensity);
+                if (matField.HasProperty("_FresnelPower")) matField.SetFloat("_FresnelPower", fresnelPower);
+                if (matField.HasProperty("_FresnelIntensity")) matField.SetFloat("_FresnelIntensity", fresnelIntensity);
+                if (matField.HasProperty("_CenterAlpha")) matField.SetFloat("_CenterAlpha", centerAlpha);
+                if (matField.HasProperty("_RimAlpha")) matField.SetFloat("_RimAlpha", rimAlpha);
+                if (matField.HasProperty("_Tiling")) matField.SetFloat("_Tiling", gridTiling);
+                if (matField.HasProperty("_GridIntensity")) matField.SetFloat("_GridIntensity", gridIntensity);
+                if (matField.HasProperty("_UseTriplanar")) matField.SetFloat("_UseTriplanar", useTriplanar ? 1f : 0f);
+            }
+
             if (tiling.HasValue)
             {
                 matField.SetTextureScale("_BaseMap", tiling.Value);
@@ -239,6 +280,11 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
                 }
             }
 #if UNITY_EDITOR
+            if (matField.HasProperty("_BaseMap") && matField.GetTexture("_BaseMap") == null)
+            {
+                Texture2D tex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/" + textureName);
+                if (tex != null) matField.SetTexture("_BaseMap", tex);
+            }
             if (matField.HasProperty("_EmissionMap") && matField.GetTexture("_EmissionMap") == null)
             {
                 Texture2D tex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/" + textureName);
@@ -252,15 +298,34 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
         matField = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(assetPath);
         if (matField != null && matField.shader != null && matField.shader.name != "Hidden/InternalErrorShader")
         {
-            if (matField.shader.name == "Universal Render Pipeline/Unlit")
+            if (isDome && customShieldShader != null && matField.shader != customShieldShader)
+            {
+                matField.shader = customShieldShader;
+            }
+            else if (!isDome && matField.shader.name == "Universal Render Pipeline/Unlit")
             {
                 Shader s = Shader.Find("Universal Render Pipeline/Particles/Unlit");
                 if (s != null) matField.shader = s;
             }
+
             matField.EnableKeyword("_EMISSION");
             matField.SetColor("_BaseColor", baseColor);
             matField.SetColor("_Color", baseColor);
             matField.SetColor("_EmissionColor", emissionColor);
+
+            if (isDome)
+            {
+                if (matField.HasProperty("_RimColor")) matField.SetColor("_RimColor", emissionColor);
+                if (matField.HasProperty("_BloomMultiplier")) matField.SetFloat("_BloomMultiplier", bloomIntensity);
+                if (matField.HasProperty("_FresnelPower")) matField.SetFloat("_FresnelPower", fresnelPower);
+                if (matField.HasProperty("_FresnelIntensity")) matField.SetFloat("_FresnelIntensity", fresnelIntensity);
+                if (matField.HasProperty("_CenterAlpha")) matField.SetFloat("_CenterAlpha", centerAlpha);
+                if (matField.HasProperty("_RimAlpha")) matField.SetFloat("_RimAlpha", rimAlpha);
+                if (matField.HasProperty("_Tiling")) matField.SetFloat("_Tiling", gridTiling);
+                if (matField.HasProperty("_GridIntensity")) matField.SetFloat("_GridIntensity", gridIntensity);
+                if (matField.HasProperty("_UseTriplanar")) matField.SetFloat("_UseTriplanar", useTriplanar ? 1f : 0f);
+            }
+
             if (tiling.HasValue)
             {
                 matField.SetTextureScale("_BaseMap", tiling.Value);
@@ -269,6 +334,11 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
                 {
                     matField.SetTextureScale("_EmissionMap", tiling.Value);
                 }
+            }
+            if (matField.HasProperty("_BaseMap") && matField.GetTexture("_BaseMap") == null)
+            {
+                Texture2D tex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/" + textureName);
+                if (tex != null) matField.SetTexture("_BaseMap", tex);
             }
             if (matField.HasProperty("_EmissionMap") && matField.GetTexture("_EmissionMap") == null)
             {
@@ -280,7 +350,8 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
 #endif
 
         // Failsafe dynamic material creation so pink / missing shader is impossible
-        Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        Shader shader = customShieldShader;
+        if (shader == null) shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
         if (shader == null) shader = Shader.Find("Universal Render Pipeline/Unlit");
         if (shader == null) shader = Shader.Find("Particles/Standard Unlit");
         if (shader == null) shader = Shader.Find("Unlit/Texture");
@@ -292,8 +363,21 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
         fallback.SetColor("_EmissionColor", emissionColor);
         fallback.EnableKeyword("_EMISSION");
         fallback.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        fallback.renderQueue = 3000;
+        fallback.renderQueue = 3010;
         fallback.SetFloat("_Cull", 0f);
+
+        if (isDome)
+        {
+            if (fallback.HasProperty("_RimColor")) fallback.SetColor("_RimColor", emissionColor);
+            if (fallback.HasProperty("_BloomMultiplier")) fallback.SetFloat("_BloomMultiplier", bloomIntensity);
+            if (fallback.HasProperty("_FresnelPower")) fallback.SetFloat("_FresnelPower", fresnelPower);
+            if (fallback.HasProperty("_FresnelIntensity")) fallback.SetFloat("_FresnelIntensity", fresnelIntensity);
+            if (fallback.HasProperty("_CenterAlpha")) fallback.SetFloat("_CenterAlpha", centerAlpha);
+            if (fallback.HasProperty("_RimAlpha")) fallback.SetFloat("_RimAlpha", rimAlpha);
+            if (fallback.HasProperty("_Tiling")) fallback.SetFloat("_Tiling", gridTiling);
+            if (fallback.HasProperty("_GridIntensity")) fallback.SetFloat("_GridIntensity", gridIntensity);
+            if (fallback.HasProperty("_UseTriplanar")) fallback.SetFloat("_UseTriplanar", useTriplanar ? 1f : 0f);
+        }
 
 #if UNITY_EDITOR
         Texture2D texFallback = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/" + textureName);
@@ -408,7 +492,7 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
                 domeColor.b * bloomIntensity,
                 domeColor.a
             );
-            Material targetDomeMat = GetOrLoadMaterial(ref domeMaterial, DOME_MAT_PATH, "Arthur_Pentagon_Grid.png", domeColor, hdrDome, new Vector2(4f, 2.5f));
+            Material targetDomeMat = GetOrLoadMaterial(ref domeMaterial, DOME_MAT_PATH, "Arthur_Pentagon_Grid.png", domeColor, hdrDome, new Vector2(gridTiling, gridTiling));
             domeMeshRenderer.sharedMaterial = targetDomeMat;
             domeMeshRenderer.sharedMaterials = new Material[] { targetDomeMat };
             if (Application.isPlaying)

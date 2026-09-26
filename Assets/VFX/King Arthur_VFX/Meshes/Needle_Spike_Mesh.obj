@@ -1,0 +1,40 @@
+# Needle_Spike_Mesh.obj
+# Dual intersecting quads (Cross-Quad Spike)
+# Base at Z=0 (thick, V=1), Tip at Z=-1 (becomes Z=+1 in Unity: thin apex tip, V=0)
+o Needle_Spike_CrossQuad
+
+# Quad 1: X-Z plane (width along X, height along Z)
+v -0.50 0.00  0.0
+v  0.50 0.00  0.0
+v  0.03 0.00 -1.0
+v -0.03 0.00 -1.0
+
+# Quad 2: Y-Z plane (thickness along Y, height along Z)
+v 0.00 -0.50  0.0
+v 0.00  0.50  0.0
+v 0.00  0.03 -1.0
+v 0.00 -0.03 -1.0
+
+# Texture coordinates: V=1 at base (thick), V=0 at tip (thin pointed tip)
+vt 0.0 1.0
+vt 1.0 1.0
+vt 1.0 0.0
+vt 0.0 0.0
+
+# Normals
+vn 0.0 1.0 0.0
+vn 0.0 -1.0 0.0
+vn 1.0 0.0 0.0
+vn -1.0 0.0 0.0
+
+# Quad 1 Faces (Double-sided)
+f 1/1/1 2/2/1 3/3/1
+f 1/1/1 3/3/1 4/4/1
+f 1/1/2 4/4/2 3/3/2
+f 1/1/2 3/3/2 2/2/2
+
+# Quad 2 Faces (Double-sided)
+f 5/1/3 6/2/3 7/3/3
+f 5/1/3 7/3/3 8/4/3
+f 5/1/4 8/4/4 7/3/4
+f 5/1/4 7/3/4 6/2/4

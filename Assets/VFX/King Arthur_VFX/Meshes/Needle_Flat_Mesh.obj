@@ -1,0 +1,29 @@
+# Needle_Flat_Mesh.obj
+# Flat horizontal quad lying in X-Z plane with base at Z=0 and tip at Z=1
+# Designed for ParticleSystem Mesh mode with alignToDirection pointing radially outward
+o Needle_Flat_Ray
+
+# 4 Vertices lying on Y=0 plane
+v -0.5 0.0 0.0
+v  0.5 0.0 0.0
+v  0.5 0.0 1.0
+v -0.5 0.0 1.0
+
+# UV coordinates: U=0 at base (Z=0), U=1 at tip (Z=1)
+# V maps across width [-0.5, 0.5]
+vt 0.0 0.0
+vt 0.0 1.0
+vt 1.0 1.0
+vt 1.0 0.0
+
+# Normals pointing up (+Y) and down (-Y) for two-sided lighting
+vn 0.0 1.0 0.0
+vn 0.0 -1.0 0.0
+
+# Top Face
+f 1/1/1 2/2/1 3/3/1
+f 1/1/1 3/3/1 4/4/1
+
+# Bottom Face
+f 1/1/2 4/4/2 3/3/2
+f 1/1/2 3/3/2 2/2/2
