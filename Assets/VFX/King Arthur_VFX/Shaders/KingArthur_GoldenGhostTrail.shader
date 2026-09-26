@@ -157,9 +157,11 @@ Shader "VFX/King Arthur/Golden Ghost Trail"
                 return output;
             }
 
-            half4 frag(Varyings input, float facing : VFACE) : SV_Target
+            half4 frag(Varyings input, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
+
+                bool isFront = IS_FRONT_VFACE(facing, true, false);
 
                 float opacity = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Opacity);
                 float dissolve = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _DissolveProgress);
@@ -195,7 +197,7 @@ Shader "VFX/King Arthur/Golden Ghost Trail"
                 // 2. Safe Normal & View Direction for Fresnel
                 float lenSq = dot(input.normalWS, input.normalWS);
                 float3 worldNormal = (lenSq > 0.0001) ? normalize(input.normalWS) : float3(0.0, 1.0, 0.0);
-                if (facing < 0.0) worldNormal = -worldNormal;
+                if (!isFront) worldNormal = -worldNormal;
 
                 float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - input.positionWS);
                 float NdotV = saturate(dot(worldNormal, viewDir));
@@ -226,7 +228,7 @@ Shader "VFX/King Arthur/Golden Ghost Trail"
                 float finalAlpha = saturate(lerp(coreOpacity, rimOpacity, saturate(fresnel)) * opacity);
 
                 // Dim backfaces slightly for holographic depth
-                if (facing < 0.0)
+                if (!isFront)
                 {
                     finalColor *= 0.65;
                     finalAlpha *= 0.65;

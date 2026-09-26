@@ -18398,11 +18398,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
---- !u!1 &418219958 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -6666213594834595716, guid: 1fb053c978d0a31439e8fbace2295935, type: 3}
-  m_PrefabInstance: {fileID: 483157690}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &429339443 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9041209627814320972, guid: c100d750a9444ee0a1f267c8e9b01010, type: 3}
@@ -23542,24 +23537,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d10d750a9444ee0a1f267c8e9b01009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterModel: {fileID: 418219958}
-  enableGhostTrail: 0
-  triggerMode: 0
+  characterModel: {fileID: 464111371}
+  enableGhostTrail: 1
+  triggerMode: 1
   frameInterval: 5
   ghostDuration: 0.6
   minMovementDistance: 0.02
   spawnWhileIdle: 1
   ghostScale: 1
   ghostScaleMultiplier: {x: 1, y: 1, z: 1}
-  positionOffset: {x: 0, y: 0, z: -0.35}
+  positionOffset: {x: 0, y: 0, z: -0.05}
   offsetInLocalSpace: 1
   leaveTrailInWorldSpace: 1
   ghostMaterial: {fileID: 2100000, guid: 9d07c0a3e79105c43b2fd18cbb293416, type: 2}
-  ghostColor: {r: 1, g: 0.85, b: 0.38, a: 0.85}
-  emissionColor: {r: 2.4, g: 1.8, b: 0.6, a: 1}
-  bloomMultiplier: 1.8
-  dissolveBurnColor: {r: 3.5, g: 2.6, b: 0.9, a: 1}
-  dissolveEdgeWidth: 0.08
+  ghostColor: {r: 0.65205944, g: 0.518061, b: 0.087351374, a: 1}
+  emissionColor: {r: 0.30419648, g: 0.22814736, b: 0.07604912, a: 1}
+  bloomMultiplier: 1.52
+  dissolveBurnColor: {r: 0.875, g: 0.65, b: 0.225, a: 1}
+  dissolveEdgeWidth: 0.102
   noiseScale: 5.5
   verticalBias: 0.4
   opacityCurve:
@@ -33834,6 +33829,171 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 297d2a39d4784204096bd2c0a4365afe, type: 3}
   m_PrefabInstance: {fileID: 876612953}
   m_PrefabAsset: {fileID: 0}
+--- !u!43 &928989410
+Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Needle_Spike_TipAtTop
+  serializedVersion: 11
+  m_SubMeshes:
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 24
+    topology: 0
+    baseVertex: 0
+    firstVertex: 0
+    vertexCount: 8
+    localAABB:
+      m_Center: {x: 0, y: 0, z: 0.5}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_Shapes:
+    vertices: []
+    shapes: []
+    channels: []
+    fullWeights: []
+  m_BindPose: []
+  m_BoneNameHashes: 
+  m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
+  m_MeshCompression: 0
+  m_IsReadable: 1
+  m_KeepVertices: 1
+  m_KeepIndices: 1
+  m_IndexFormat: 0
+  m_IndexBuffer: 000001000200000002000300000002000100000003000200040005000600040006000700040006000500040007000600
+  m_VertexData:
+    serializedVersion: 3
+    m_VertexCount: 8
+    m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 12
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 24
+      format: 0
+      dimension: 2
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    m_DataSize: 256
+    _typelessdata: 000000bf0000000000000000000000000000803f00000000000000000000803f0000003f00000000000000000000000000000000000000000000803f0000803f8fc2f53c000000000000803f000000000000803f000000000000803f000000008fc2f5bc000000000000803f000000000000000000000000000000000000000000000000000000bf00000000000080bf0000000000000000000000000000803f000000000000003f000000000000000000000000000000000000803f0000803f000000008fc2f53c0000803f000080bf00000000000000000000803f00000000000000008fc2f5bc0000803f0000000000000000000000000000000000000000
+  m_CompressedMesh:
+    m_Vertices:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UV:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Normals:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Tangents:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Weights:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_NormalSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_TangentSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_FloatColors:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_BoneIndices:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Triangles:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UVInfo: 0
+  m_LocalAABB:
+    m_Center: {x: 0, y: 0, z: 0.5}
+    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_MeshUsageFlags: 0
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: 1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!1 &978149880
 GameObject:
   m_ObjectHideFlags: 0

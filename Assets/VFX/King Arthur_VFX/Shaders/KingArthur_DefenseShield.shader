@@ -118,13 +118,15 @@ Shader "VFX/King Arthur/Defense Shield"
                 return output;
             }
 
-            half4 frag(Varyings input, float facing : VFACE) : SV_Target
+            half4 frag(Varyings input, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
 
+                bool isFront = IS_FRONT_VFACE(facing, true, false);
+
                 float3 worldNormal = normalize(input.normalWS);
                 // Correct normal direction if backface
-                if (facing < 0.0) worldNormal = -worldNormal;
+                if (!isFront) worldNormal = -worldNormal;
 
                 float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - input.positionWS);
                 float NdotV = saturate(dot(worldNormal, viewDir));
@@ -166,7 +168,7 @@ Shader "VFX/King Arthur/Defense Shield"
                 float3 finalColor = baseTint * _CenterAlpha + rimGlow * (fresnel + lineFactor * _GridIntensity * _GridBloom + innerGlow);
 
                 // Backface dimming for natural holographic depth
-                float faceDim = (facing > 0.0) ? 1.0 : _BackfaceMultiplier;
+                float faceDim = isFront ? 1.0 : _BackfaceMultiplier;
                 finalColor *= faceDim;
 
                 // 5. Alpha blending
@@ -174,14 +176,20 @@ Shader "VFX/King Arthur/Defense Shield"
                 finalAlpha *= faceDim;
 
                 // 6. Soft ground depth intersection
-                #if defined(_CAMERA_DEPTH_ATTACHED) || defined(REQUIRE_DEPTH_TEXTURE)
-                float2 screenUV = input.screenPos.xy / input.screenPos.w;
-                float rawDepth = SampleSceneDepth(screenUV);
-                float sceneLinearDepth = LinearEyeDepth(rawDepth, _ZBufferParams);
-                float surfaceLinearDepth = input.screenPos.w;
-                float depthDifference = sceneLinearDepth - surfaceLinearDepth;
-                float depthFade = saturate(depthDifference / max(_DepthFadeDistance, 0.001));
-                finalAlpha *= depthFade;
+                #if defined(UNITY_DECLARE_DEPTH_TEXTURE_INCLUDED)
+                if (input.screenPos.w > 0.0001)
+                {
+                    float2 screenUV = input.screenPos.xy / input.screenPos.w;
+                    float rawDepth = SampleSceneDepth(screenUV);
+                    float sceneLinearDepth = LinearEyeDepth(rawDepth, _ZBufferParams);
+                    float surfaceLinearDepth = input.screenPos.w;
+                    float depthDifference = sceneLinearDepth - surfaceLinearDepth;
+                    if (depthDifference > 0.0)
+                    {
+                        float depthFade = saturate(depthDifference / max(_DepthFadeDistance, 0.001));
+                        finalAlpha *= depthFade;
+                    }
+                }
                 #endif
 
                 // Breathing pulse

@@ -130,10 +130,17 @@ public class ArthurGhostTrailVFX : MonoBehaviour
         public Transform clone;
     }
 
+    private struct RendererPair
+    {
+        public Renderer source;
+        public Renderer clone;
+    }
+
     private class GhostInstance
     {
         public GameObject rootObject;
         public List<TransformPair> transformPairs = new List<TransformPair>();
+        public List<RendererPair> rendererPairs = new List<RendererPair>();
         public List<Renderer> renderers = new List<Renderer>();
         public Vector3 spawnWorldPos;
         public Quaternion spawnWorldRot;
@@ -203,11 +210,43 @@ public class ArthurGhostTrailVFX : MonoBehaviour
 
     /// <summary>
     /// Finds or validates the active character model to duplicate.
+    /// Ensures that an entire character model (with Animator and complete mesh hierarchy)
+    /// is used, rather than an isolated submesh/accessory (like Beard, Crown, or Sword).
     /// </summary>
     public GameObject ResolveSourceModel()
     {
-        if (characterModel != null && characterModel.activeInHierarchy)
+        // 1. If characterModel is assigned, ensure it is the complete animated character root,
+        // and NOT an isolated child submesh (e.g. Beard_Beard_0, Face, Body, Object_217).
+        if (characterModel != null)
         {
+            if (characterModel.GetComponent<Animator>() == null)
+            {
+                Animator animInParent = characterModel.GetComponentInParent<Animator>();
+                if (animInParent != null)
+                {
+                    characterModel = animInParent.gameObject;
+                }
+                else if (GetComponent<Animator>() != null)
+                {
+                    characterModel = gameObject;
+                }
+            }
+
+            if (characterModel.activeInHierarchy)
+            {
+                if (currentSourceModel != characterModel)
+                {
+                    currentSourceModel = characterModel;
+                    DestroyPoolContainer();
+                }
+                return characterModel;
+            }
+        }
+
+        // 2. Auto-detect: First check if THIS GameObject itself is the animated model
+        if (GetComponent<Animator>() != null)
+        {
+            characterModel = gameObject;
             if (currentSourceModel != characterModel)
             {
                 currentSourceModel = characterModel;
@@ -216,13 +255,12 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             return characterModel;
         }
 
-        // Auto-detect:
-        // 1. Search direct children for the active animated model (e.g. King_Arthur_Idle_Animation)
+        // 3. Search direct children for the active animated model with an Animator
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform child = transform.GetChild(i);
             if (child.name == CONTAINER_NAME) continue;
-            if (child.gameObject.activeInHierarchy && (child.GetComponent<Animator>() != null || child.GetComponentInChildren<SkinnedMeshRenderer>() != null))
+            if (child.gameObject.activeInHierarchy && child.GetComponent<Animator>() != null)
             {
                 characterModel = child.gameObject;
                 if (currentSourceModel != characterModel)
@@ -234,29 +272,33 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             }
         }
 
-        // 2. If this GameObject itself has an Animator or SkinnedMeshRenderer
-        if (GetComponent<Animator>() != null || GetComponent<SkinnedMeshRenderer>() != null)
+        // 4. Search parent/siblings for active model with Animator
+        if (transform.parent != null)
         {
-            characterModel = gameObject;
-            currentSourceModel = characterModel;
-            return characterModel;
-        }
-
-        // 3. Fallback: first active child that is not the clones container
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Transform child = transform.GetChild(i);
-            if (child.name == CONTAINER_NAME) continue;
-            if (child.gameObject.activeInHierarchy)
+            for (int i = 0; i < transform.parent.childCount; i++)
             {
-                characterModel = child.gameObject;
-                currentSourceModel = characterModel;
-                return characterModel;
+                Transform sibling = transform.parent.GetChild(i);
+                if (sibling == transform || sibling.name == CONTAINER_NAME) continue;
+                if (sibling.gameObject.activeInHierarchy && sibling.GetComponent<Animator>() != null)
+                {
+                    characterModel = sibling.gameObject;
+                    if (currentSourceModel != characterModel)
+                    {
+                        currentSourceModel = characterModel;
+                        DestroyPoolContainer();
+                    }
+                    return characterModel;
+                }
             }
         }
 
+        // 5. Fallback: this GameObject
         characterModel = gameObject;
-        currentSourceModel = characterModel;
+        if (currentSourceModel != characterModel)
+        {
+            currentSourceModel = characterModel;
+            DestroyPoolContainer();
+        }
         return characterModel;
     }
 
@@ -405,6 +447,17 @@ public class ArthurGhostTrailVFX : MonoBehaviour
         // 1. Synchronize all bone transforms and attached accessories (beard, crown, sword, etc.) to exact current animation frame
         SyncTransforms(ghost);
 
+        // Synchronize renderer active/enabled states from source
+        for (int i = 0; i < ghost.rendererPairs.Count; i++)
+        {
+            var pair = ghost.rendererPairs[i];
+            if (pair.clone != null)
+            {
+                bool shouldEnable = pair.source != null ? (pair.source.enabled && pair.source.gameObject.activeInHierarchy) : true;
+                pair.clone.enabled = shouldEnable;
+            }
+        }
+
         // 2. Position the ghost clone
         Vector3 worldOffset = offsetInLocalSpace ? source.transform.TransformDirection(positionOffset) : positionOffset;
         ghost.spawnWorldPos = source.transform.position + worldOffset;
@@ -425,13 +478,13 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             containerLossy.z > 0.0001f ? desiredWorldScale.z / containerLossy.z : desiredWorldScale.z
         );
 
-        // 3. Set initial full visibility state
-        ApplyMaterialPropertiesToGhost(ghost, 1.0f, 0.0f);
-
         ghost.spawnTime = GetCurrentTime();
         ghost.lifetime = Mathf.Max(0.05f, ghostDuration);
         ghost.isActive = true;
         ghost.rootObject.SetActive(true);
+
+        // 3. Set initial full visibility state (now that root is active)
+        ApplyMaterialPropertiesToGhost(ghost, 1.0f, 0.0f);
 
         activeGhosts.Add(ghost);
 
@@ -529,7 +582,7 @@ public class ArthurGhostTrailVFX : MonoBehaviour
         for (int r = 0; r < rCount; r++)
         {
             Renderer rend = ghost.renderers[r];
-            if (rend == null || !rend.gameObject.activeInHierarchy) continue;
+            if (rend == null || !rend.enabled) continue;
 
             rend.GetPropertyBlock(propertyBlock);
 
@@ -580,11 +633,12 @@ public class ArthurGhostTrailVFX : MonoBehaviour
     private GhostInstance CreateNewGhostClone(GameObject sourceModel)
     {
         EnsureContainer();
+        LoadGhostMaterial();
 
         GhostInstance ghost = new GhostInstance();
         int cloneIndex = activeGhosts.Count + availableGhosts.Count;
 
-        // Direct duplication of the character model under the Ghost_Clones container
+        // Direct duplication of the full character model under the Ghost_Clones container
         GameObject clone = Instantiate(sourceModel, ghostClonesContainer);
         clone.name = $"Arthur_Ghost_Clone_{cloneIndex}";
         // Prevent preview clones from being serialized into the scene
@@ -631,12 +685,23 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             SafeDestroy(vfxChild.gameObject);
         }
 
+        var visualEffects = clone.GetComponentsInChildren<UnityEngine.VFX.VisualEffect>(true);
+        for (int i = 0; i < visualEffects.Length; i++) SafeDestroy(visualEffects[i]);
+
+        var loopers = clone.GetComponentsInChildren<VFXGraphLooper>(true);
+        for (int i = 0; i < loopers.Length; i++) SafeDestroy(loopers[i]);
+
         // Setup Renderers and assign ghost material
         Renderer[] allRenderers = clone.GetComponentsInChildren<Renderer>(true);
+        ghost.rendererPairs.Clear();
+        ghost.renderers.Clear();
+
         for (int i = 0; i < allRenderers.Length; i++)
         {
             Renderer rend = allRenderers[i];
             if (rend == null) continue;
+            // Only process actual geometry meshes; ignore VFXRenderer, ParticleSystemRenderer, etc.
+            if (!(rend is MeshRenderer || rend is SkinnedMeshRenderer)) continue;
 
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             rend.receiveShadows = false;
@@ -646,6 +711,29 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             if (rend is SkinnedMeshRenderer smr)
             {
                 smr.updateWhenOffscreen = true;
+
+                // Ensure smr bones point to clone's bones, not original source bones
+                if (smr.bones != null && smr.bones.Length > 0)
+                {
+                    Transform[] newBones = new Transform[smr.bones.Length];
+                    for (int b = 0; b < smr.bones.Length; b++)
+                    {
+                        if (smr.bones[b] != null)
+                        {
+                            string bonePath = GetRelativeHierarchyPath(sourceModel.transform, smr.bones[b]);
+                            Transform cloneBone = string.IsNullOrEmpty(bonePath) ? null : clone.transform.Find(bonePath);
+                            newBones[b] = cloneBone != null ? cloneBone : smr.bones[b];
+                        }
+                    }
+                    smr.bones = newBones;
+                }
+
+                if (smr.rootBone != null)
+                {
+                    string rootBonePath = GetRelativeHierarchyPath(sourceModel.transform, smr.rootBone);
+                    Transform cloneRootBone = string.IsNullOrEmpty(rootBonePath) ? null : clone.transform.Find(rootBonePath);
+                    if (cloneRootBone != null) smr.rootBone = cloneRootBone;
+                }
             }
 
             int matCount = rend.sharedMaterials != null ? Mathf.Max(1, rend.sharedMaterials.Length) : 1;
@@ -656,6 +744,23 @@ public class ArthurGhostTrailVFX : MonoBehaviour
             }
             rend.sharedMaterials = ghostMats;
 
+            // Find matching source renderer to sync enabled state
+            string rendPath = GetRelativeHierarchyPath(clone.transform, rend.transform);
+            Renderer srcRend = null;
+            if (string.IsNullOrEmpty(rendPath))
+            {
+                srcRend = sourceModel.GetComponent<Renderer>();
+            }
+            else
+            {
+                Transform srcTransform = sourceModel.transform.Find(rendPath);
+                if (srcTransform != null)
+                {
+                    srcRend = srcTransform.GetComponent<Renderer>();
+                }
+            }
+
+            ghost.rendererPairs.Add(new RendererPair { source = srcRend, clone = rend });
             ghost.renderers.Add(rend);
         }
 
