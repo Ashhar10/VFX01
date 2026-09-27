@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7300000000000000011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7300000000000000012}
+  - component: {fileID: 7300000000000000013}
+  m_Layer: 0
+  m_Name: Stan_Special_Package_Activation_VFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7300000000000000012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7300000000000000011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7300000000000000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7300000000000000011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c30a0001000000000000000000000002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loopPreview: 1
+  loopCycleDuration: 1.8
+  starburstPointer: {fileID: 0}
+  starburstOffset: {x: 0, y: 0.75, z: 0.65}
+  starburstSize: 2.6
+  starburstLifetime: 0.35
+  starburstSparkleCount: 35
+  packageOffset: {x: 0, y: 0.75, z: 0.65}
+  centerGlowSize: 1
+  glyphEmissionRate: 28
+  glyphSize: 0.25
+  popOutSpeed: 3.6
+  upwardDrift: 1.1
+  bloomIntensity: 5.5
+  coreWhite: {r: 1, g: 0.96, b: 0.96, a: 1}
+  cyberRed: {r: 1, g: 0.18, b: 0.24, a: 1}
+  deepCrimson: {r: 0.85, g: 0.08, b: 0.18, a: 1}
+  centerGlowMat: {fileID: 2100000, guid: a30a0001000000000000000000000004, type: 2}
+  starburstMat: {fileID: 2100000, guid: a30a0001000000000000000000000003, type: 2}
+  cyberGlyphsMat: {fileID: 2100000, guid: a30a0001000000000000000000000005, type: 2}
+  sparkMoteMat: {fileID: 2100000, guid: a30a0001000000000000000000000002, type: 2}

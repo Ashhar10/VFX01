@@ -32,10 +32,10 @@ Material:
     m_Floats:
     - _Cull: 0
     - _DstBlend: 10
-    - _Intensity: 2.5
+    - _Intensity: 1.49
     - _SrcBlend: 5
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 1.0, g: 0.55, b: 0.75, a: 1.0}
+    - _BaseColor: {r: 0.3509434, g: 0, b: 0.15563571, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
