@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6879308501462187522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2324607659932685912}
+  - component: {fileID: 3072417405896281686}
+  m_Layer: 0
+  m_Name: Alura_Magic_Field_Stage3_Damage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2324607659932685912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879308501462187522}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3072417405896281686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879308501462187522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6426fa4c16e95cd448e3fe14eac8bce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyOffset: {x: 1.05, y: 0, z: 0}
+  duration: 3
+  bloomIntensity: 4.2
+  enemyDamageColor: {r: 0.75, g: 0.25, b: 1, a: 1}
+  damageSkullColor: {r: 0.92, g: 0.45, b: 1, a: 1}
+  necroticSmokeColor: {r: 0.48, g: 0.15, b: 0.75, a: 0.7}
+  necroticStrikeColor: {r: 0.6, g: 0.1, b: 0.95, a: 1}
+  skullRate: 8
+  smokeRate: 16
+  skullSize: 0.38
+  auraRadius: 0.85
+  damageSkullMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000004, type: 2}
+  smokeMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000005, type: 2}
+  enemyRingMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000008, type: 2}
+  gridMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000001, type: 2}
+  softGlowMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000009, type: 2}

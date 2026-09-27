@@ -1,0 +1,293 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &116497966135679645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2928010199510308648}
+  - component: {fileID: 1038491841634976753}
+  m_Layer: 0
+  m_Name: Stage3_HealDamage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2928010199510308648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116497966135679645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2324607659932685904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1038491841634976753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116497966135679645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10a0001000000000000000000000013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldSize: 4.2
+  stageDuration: 3
+  autoPlayOnStart: 0
+  allyTileOffset: {x: -1.05, y: 0, z: 0}
+  allyHealColor: {r: 0.3, g: 1, b: 0.65, a: 1}
+  healCrossColor: {r: 0.85, g: 1, b: 0.92, a: 1}
+  enemyTileOffset: {x: 1.05, y: 0, z: 0}
+  enemyDamageColor: {r: 0.75, g: 0.25, b: 1, a: 1}
+  damageSkullColor: {r: 0.92, g: 0.45, b: 1, a: 1}
+  necroticSmokeColor: {r: 0.48, g: 0.15, b: 0.75, a: 0.7}
+  necroticStrikeColor: {r: 0.6, g: 0.1, b: 0.95, a: 1}
+  healPlusMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000003, type: 2}
+  damageSkullMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000004, type: 2}
+  smokeMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000005, type: 2}
+  sparkMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000006, type: 2}
+  allyRingMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000007, type: 2}
+  enemyRingMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000008, type: 2}
+  gridMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000001, type: 2}
+  softGlowMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000009, type: 2}
+--- !u!1 &1922327730062211502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8608885003894199920}
+  - component: {fileID: 7549745813554930094}
+  m_Layer: 0
+  m_Name: Stage2_Activation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8608885003894199920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922327730062211502}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2324607659932685904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7549745813554930094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922327730062211502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10a0001000000000000000000000012, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldSize: 4.2
+  stageDuration: 2.2
+  bloomIntensity: 4
+  loopRotation: 1
+  runeRotationSpeed: 65
+  runeColor: {r: 0.7, g: 1, b: 0.85, a: 1}
+  allyColumnColor: {r: 0.3, g: 1, b: 0.65, a: 1}
+  enemyColumnColor: {r: 0.75, g: 0.25, b: 1, a: 1}
+  runeMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000002, type: 2}
+  gridMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000001, type: 2}
+  sparkMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000006, type: 2}
+  softGlowMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000009, type: 2}
+--- !u!1 &5862713728437303046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3951231726154518962}
+  - component: {fileID: 3711122694943144092}
+  m_Layer: 0
+  m_Name: Stage4_Dissipation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3951231726154518962
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5862713728437303046}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2324607659932685904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3711122694943144092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5862713728437303046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10a0001000000000000000000000014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldSize: 4.2
+  dissipationDuration: 1.8
+  autoPlayOnStart: 0
+  burstColor: {r: 0.7, g: 1, b: 0.85, a: 1}
+  motesColor: {r: 0.9, g: 1, b: 0.95, a: 1}
+  sparkMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000006, type: 2}
+  gridMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000001, type: 2}
+  softGlowMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000009, type: 2}
+--- !u!1 &6879308501462187515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2324607659932685904}
+  - component: {fileID: 3072417405896281680}
+  m_Layer: 0
+  m_Name: Alura_Magic_Field_Full_Sequence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2324607659932685904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879308501462187515}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3617594140668057207}
+  - {fileID: 8608885003894199920}
+  - {fileID: 2928010199510308648}
+  - {fileID: 3951231726154518962}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3072417405896281680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879308501462187515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10a0001000000000000000000000015, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playbackMode: 0
+  soloStage: 1
+  loopSequence: 0
+  masterBloomIntensity: 4.2
+  stage1Time: 1.3
+  stage2Time: 1.4
+  stage3Time: 2.5
+  stage4Time: 1.6
+  stage1Targeting: {fileID: 6859992318770715895}
+  stage2Activation: {fileID: 7549745813554930094}
+  stage3HealDamage: {fileID: 1038491841634976753}
+  stage3HealOnly: {fileID: 0}
+  stage3DamageOnly: {fileID: 0}
+  stage4Dissipation: {fileID: 3711122694943144092}
+--- !u!1 &8749589953148965857
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3617594140668057207}
+  - component: {fileID: 6859992318770715895}
+  m_Layer: 0
+  m_Name: Stage1_Targeting
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3617594140668057207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8749589953148965857}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2324607659932685904}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6859992318770715895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8749589953148965857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10a0001000000000000000000000011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fieldSize: 4.2
+  gridColor: {r: 0.25, g: 1, b: 0.55, a: 1}
+  allyTileOffset: {x: -1.05, y: 0, z: 0}
+  enemyTileOffset: {x: 1.05, y: 0, z: 0}
+  allyHighlightColor: {r: 0.18, g: 0.9, b: 1, a: 1}
+  enemyHighlightColor: {r: 1, g: 0.22, b: 0.25, a: 1}
+  stageDuration: 2
+  fadeInDuration: 0.45
+  autoPlayOnStart: 0
+  gridMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000001, type: 2}
+  allyRingMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000007, type: 2}
+  enemyRingMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000008, type: 2}
+  healPlusMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000003, type: 2}
+  softGlowMaterial: {fileID: 2100000, guid: b10a0001000000000000000000000009, type: 2}
