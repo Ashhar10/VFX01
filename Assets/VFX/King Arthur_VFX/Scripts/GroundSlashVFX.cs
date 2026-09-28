@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,7 +12,6 @@ using System.Collections.Generic;
 /// 2. Leading Wave (Vertical Crescent in YZ plane + Horizontal Wave in XZ plane).
 /// 3. Much larger sliders for Sparkles, Fog/Vapor, and timing parameters.
 /// 4. Zero black boxes / soft depth-blended shaders.
-/// 5. Global & Slash Bloom sliders for real-time glow control.
 /// </summary>
 [DisallowMultipleComponent]
 public class GroundSlashVFX : MonoBehaviour
@@ -35,42 +32,6 @@ public class GroundSlashVFX : MonoBehaviour
     public bool PlayOnEnable { get => playOnEnable; set => playOnEnable = value; }
     public bool Loop { get => loop; set => loop = value; }
     public float LoopInterval { get => loopInterval; set => loopInterval = value; }
-
-    // ==========================================
-    //  BLOOM & RADIANCE CONTROLS
-    // ==========================================
-    [Header("=== Bloom & Radiance Controls ===")]
-    [Tooltip("Master Bloom / Radiance multiplier for ground slash emissive brightness (0.2 = subtle, 0.65 = balanced holy gold, 1.5+ = high glow).")]
-    [SerializeField, Range(0.1f, 3.0f)] private float slashBloomIntensity = 0.65f;
-
-    [Tooltip("Synchronize and control the overall Scene Post-Processing Bloom directly from this Inspector.")]
-    [SerializeField] private bool controlSceneGlobalBloom = true;
-
-    [Tooltip("Overall Scene Global Volume Bloom Intensity (0 = Off, 0.4 = Subtle, 0.65 = Cinematic, 1.5+ = High).")]
-    [SerializeField, Range(0f, 3f)] private float sceneBloomIntensity = 0.65f;
-
-    [Tooltip("Overall Scene Bloom Scatter (glow diffusion radius).")]
-    [SerializeField, Range(0.1f, 1f)] private float sceneBloomScatter = 0.65f;
-
-    public float SlashBloomIntensity
-    {
-        get => slashBloomIntensity;
-        set
-        {
-            slashBloomIntensity = Mathf.Clamp(value, 0.1f, 3f);
-            ApplyBloomSettings();
-        }
-    }
-
-    public float SceneBloomIntensity
-    {
-        get => sceneBloomIntensity;
-        set
-        {
-            sceneBloomIntensity = Mathf.Clamp(value, 0f, 3f);
-            ApplyBloomSettings();
-        }
-    }
 
     // ==========================================
     //  TRAVEL & TRAJECTORY (LARGE SLIDERS)
@@ -174,7 +135,7 @@ public class GroundSlashVFX : MonoBehaviour
     [SerializeField, Range(0.05f, 1.5f)] private float rockRiseHeight = 0.25f;
 
     [Tooltip("Molten underside emission color on rocks (HDR).")]
-    [SerializeField, ColorUsage(true, true)] private Color rockMoltenEmission = new Color(1.5f, 0.6f, 0.1f, 1f);
+    [SerializeField, ColorUsage(true, true)] private Color rockMoltenEmission = new Color(14f, 6f, 1f, 1f);
 
     // ==========================================
     //  TWINKLING DIAMOND SPARKS (LARGER SLIDERS)
@@ -284,41 +245,6 @@ public class GroundSlashVFX : MonoBehaviour
     [SerializeField, Range(0.5f, 6f)] private float groundLightSpacing = 2.0f;
 
     // ==========================================
-    //  SELF-CONTAINED MATERIALS & TEXTURES (EXPORT SAFE)
-    // ==========================================
-    [Header("=== Materials & Shaders (Export Safe) ===")]
-    [Tooltip("Pre-configured material for vertical crescent blade.")]
-    [SerializeField] private Material verticalBladeMat;
-
-    [Tooltip("Pre-configured material for horizontal ground wave.")]
-    [SerializeField] private Material horizontalWaveMat;
-
-    [Tooltip("Pre-configured material for molten ground fissure.")]
-    [SerializeField] private Material groundFissureMat;
-
-    [Tooltip("Pre-configured material for erupted chiseled rocks.")]
-    [SerializeField] private Material rockLitMat;
-
-    [Tooltip("Pre-configured material for diamond sparks.")]
-    [SerializeField] private Material sparkMat;
-
-    [Tooltip("Pre-configured material for heat smoke / vapor.")]
-    [SerializeField] private Material vaporMat;
-
-    [Tooltip("Pre-configured material for shockwave distortion ring.")]
-    [SerializeField] private Material distortionRingMat;
-
-    [Header("=== VFX Textures (Export Safe) ===")]
-    [Tooltip("Circular soft texture for smoke vapor puffs.")]
-    [SerializeField] private Texture2D vaporTexture;
-
-    [Tooltip("4-point star / diamond texture for sparks.")]
-    [SerializeField] private Texture2D sparkTexture;
-
-    [Tooltip("Crescent slash texture.")]
-    [SerializeField] private Texture2D crescentTexture;
-
-    // ==========================================
     //  RUNTIME STATE & REUSABLE ASSETS
     // ==========================================
     private bool isPlaying;
@@ -331,6 +257,14 @@ public class GroundSlashVFX : MonoBehaviour
     private Mesh verticalQuadMesh;
     private Mesh horizontalQuadMesh;
     private Mesh chiseledRockMesh;
+
+    private Material verticalBladeMat;
+    private Material horizontalWaveMat;
+    private Material groundFissureMat;
+    private Material rockLitMat;
+    private Material sparkMat;
+    private Material vaporMat;
+    private Material distortionRingMat;
 
     public bool IsPlaying => isPlaying;
 
@@ -355,7 +289,8 @@ public class GroundSlashVFX : MonoBehaviour
 
     private void InitializeMeshes()
     {
-        // 1. Vertical Quad in YZ plane
+        // 1. Vertical Quad in YZ plane (width along Z, height along Y)
+        // Cuts forward along Z (90 degrees front orientation)
         verticalQuadMesh = new Mesh();
         verticalQuadMesh.name = "VerticalBladeQuad_YZ";
         verticalQuadMesh.vertices = new Vector3[]
@@ -371,10 +306,6 @@ public class GroundSlashVFX : MonoBehaviour
             new Vector2(1f, 0f),
             new Vector2(1f, 1f),
             new Vector2(0f, 1f)
-        };
-        verticalQuadMesh.colors = new Color[]
-        {
-            Color.white, Color.white, Color.white, Color.white
         };
         verticalQuadMesh.triangles = new int[]
         {
@@ -401,10 +332,6 @@ public class GroundSlashVFX : MonoBehaviour
             new Vector2(1f, 1f),
             new Vector2(0f, 1f)
         };
-        horizontalQuadMesh.colors = new Color[]
-        {
-            Color.white, Color.white, Color.white, Color.white
-        };
         horizontalQuadMesh.triangles = new int[]
         {
             0, 2, 1, 0, 3, 2,
@@ -419,59 +346,25 @@ public class GroundSlashVFX : MonoBehaviour
 
     private void InitializeMaterials()
     {
-        // 1. Vertical Blade Material
-        if (verticalBladeMat == null)
-        {
-            Shader vertShader = Shader.Find("VFX/VerticalCrescent");
-            if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            verticalBladeMat = new Material(vertShader);
-        }
-        else
-        {
-            verticalBladeMat = new Material(verticalBladeMat);
-        }
+        Shader vertShader = Shader.Find("VFX/VerticalCrescent");
+        if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        verticalBladeMat = new Material(vertShader);
         verticalBladeMat.SetColor("_Color", bladeColor);
         verticalBladeMat.SetColor("_CoreColor", bladeLeadColor);
         verticalBladeMat.SetFloat("_Brightness", 3.2f);
         verticalBladeMat.SetFloat("_Sharpness", 3.5f);
-        if (crescentTexture != null)
-        {
-            verticalBladeMat.SetTexture("_MainTex", crescentTexture);
-            verticalBladeMat.SetTexture("_BaseMap", crescentTexture);
-        }
 
-        // 2. Horizontal Wave Material
-        if (horizontalWaveMat == null)
-        {
-            Shader vertShader = Shader.Find("VFX/VerticalCrescent");
-            if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            horizontalWaveMat = new Material(vertShader);
-        }
-        else
-        {
-            horizontalWaveMat = new Material(horizontalWaveMat);
-        }
+        horizontalWaveMat = new Material(vertShader);
         horizontalWaveMat.SetColor("_Color", bladeColor);
         horizontalWaveMat.SetColor("_CoreColor", bladeLeadColor);
         horizontalWaveMat.SetFloat("_Brightness", 2.8f);
         horizontalWaveMat.SetFloat("_Sharpness", 2.5f);
-        if (crescentTexture != null)
-        {
-            horizontalWaveMat.SetTexture("_MainTex", crescentTexture);
-            horizontalWaveMat.SetTexture("_BaseMap", crescentTexture);
-        }
 
-        // 3. Ground Fissure Material
-        if (groundFissureMat == null)
-        {
-            Shader fissureShader = Shader.Find("VFX/GroundFissure");
-            if (fissureShader == null) fissureShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            groundFissureMat = new Material(fissureShader);
-        }
-        else
-        {
-            groundFissureMat = new Material(groundFissureMat);
-        }
+        Shader fissureShader = Shader.Find("VFX/GroundFissure");
+        if (fissureShader == null) fissureShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        groundFissureMat = new Material(fissureShader);
         groundFissureMat.SetColor("_MoltenColor", moltenColor);
         groundFissureMat.SetColor("_CrustColor", crustColor);
         groundFissureMat.SetColor("_RockColor", stoneColor);
@@ -479,162 +372,42 @@ public class GroundSlashVFX : MonoBehaviour
         groundFissureMat.SetFloat("_CoreRadius", 0.35f);
         groundFissureMat.SetFloat("_Brightness", 3.0f);
 
-        // 4. Erupted Rock Slab Material
-        if (rockLitMat == null)
-        {
-            Shader rockShader = Shader.Find("VFX/MoltenRockSlab");
-            if (rockShader == null) rockShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            rockLitMat = new Material(rockShader);
-        }
-        else
-        {
-            rockLitMat = new Material(rockLitMat);
-        }
-        rockLitMat.SetColor("_BaseColor", stoneColor);
-        rockLitMat.SetFloat("_Smoothness", 0.15f);
-        if (rockLitMat.HasProperty("_MoltenColor"))
-        {
-            rockLitMat.SetColor("_MoltenColor", moltenColor * 1.5f);
-        }
-        else
-        {
-            rockLitMat.SetColor("_EmissionColor", Color.black);
-            rockLitMat.DisableKeyword("_EMISSION");
-        }
+        Shader litShader = Shader.Find("Universal Render Pipeline/Lit");
+        if (litShader == null) litShader = Shader.Find("Universal Render Pipeline/Simple Lit");
 
-        // 5. Spark Material
-        if (sparkMat == null)
-        {
-            Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
-            if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            sparkMat = new Material(sparkShader);
-        }
-        else
-        {
-            sparkMat = new Material(sparkMat);
-        }
+        rockLitMat = new Material(litShader);
+        rockLitMat.SetColor("_BaseColor", stoneColor);
+        rockLitMat.SetFloat("_Smoothness", 0.1f);
+        rockLitMat.SetColor("_EmissionColor", rockMoltenEmission);
+        rockLitMat.EnableKeyword("_EMISSION");
+
+        Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
+        if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        sparkMat = new Material(sparkShader);
         sparkMat.SetColor("_Color", sparkColor);
         sparkMat.SetFloat("_Brightness", 3.5f);
         sparkMat.SetFloat("_StarIntensity", 2.5f);
         sparkMat.SetFloat("_CoreSharpness", 5f);
-        if (sparkTexture != null)
-        {
-            sparkMat.SetTexture("_MainTex", sparkTexture);
-            sparkMat.SetTexture("_BaseMap", sparkTexture);
-        }
 
-        // 6. Heat Smoke / Vapor Material
-        if (vaporMat == null)
-        {
-            Shader vaporShader = Shader.Find("VFX/SoftHeatSmoke");
-            if (vaporShader == null) vaporShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            vaporMat = new Material(vaporShader);
-        }
-        else
-        {
-            vaporMat = new Material(vaporMat);
-        }
+        Shader vaporShader = Shader.Find("VFX/SoftHeatSmoke");
+        if (vaporShader == null) vaporShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        vaporMat = new Material(vaporShader);
         vaporMat.SetColor("_Color", vaporColor);
         vaporMat.SetFloat("_CoreBrightness", 1.8f);
         vaporMat.SetFloat("_Softness", 0.6f);
-        if (vaporTexture != null)
-        {
-            vaporMat.SetTexture("_MainTex", vaporTexture);
-            vaporMat.SetTexture("_BaseMap", vaporTexture);
-        }
 
-        // 7. Screen Distortion Ring Material
-        if (distortionRingMat == null)
+        // Screen Distortion Ring Material
+        Shader distortShader = Shader.Find("VFX/ScreenDistortionRing");
+        if (distortShader != null)
         {
-            Shader distortShader = Shader.Find("VFX/ScreenDistortionRing");
-            if (distortShader != null)
-            {
-                distortionRingMat = new Material(distortShader);
-            }
-        }
-        else
-        {
-            distortionRingMat = new Material(distortionRingMat);
-        }
-        if (distortionRingMat != null)
-        {
+            distortionRingMat = new Material(distortShader);
             distortionRingMat.SetFloat("_DistortionStrength", distortionStrength);
             distortionRingMat.SetFloat("_ChromaticAberration", distortionChromaticAberration);
             distortionRingMat.SetColor("_GlowColor", distortionRimGlow);
             distortionRingMat.SetFloat("_GlowIntensity", 1.5f);
             distortionRingMat.SetFloat("_RingWidth", 0.08f);
-        }
-
-        ApplyBloomSettings();
-    }
-
-    private void OnValidate()
-    {
-        ApplyBloomSettings();
-    }
-
-    /// <summary>
-    /// Updates all material brightness / bloom radiance multipliers and optionally synchronizes scene Global Volume Bloom.
-    /// </summary>
-    public void ApplyBloomSettings()
-    {
-        if (verticalBladeMat != null && verticalBladeMat.HasProperty("_Brightness"))
-        {
-            verticalBladeMat.SetFloat("_Brightness", 3.2f * slashBloomIntensity);
-        }
-
-        if (horizontalWaveMat != null && horizontalWaveMat.HasProperty("_Brightness"))
-        {
-            horizontalWaveMat.SetFloat("_Brightness", 2.8f * slashBloomIntensity);
-        }
-
-        if (groundFissureMat != null && groundFissureMat.HasProperty("_Brightness"))
-        {
-            groundFissureMat.SetFloat("_Brightness", 3.0f * slashBloomIntensity);
-        }
-
-        if (sparkMat != null && sparkMat.HasProperty("_Brightness"))
-        {
-            sparkMat.SetFloat("_Brightness", 3.5f * slashBloomIntensity);
-        }
-
-        if (vaporMat != null && vaporMat.HasProperty("_CoreBrightness"))
-        {
-            vaporMat.SetFloat("_CoreBrightness", 1.8f * slashBloomIntensity);
-        }
-
-        if (distortionRingMat != null && distortionRingMat.HasProperty("_GlowIntensity"))
-        {
-            distortionRingMat.SetFloat("_GlowIntensity", 1.5f * slashBloomIntensity);
-        }
-
-        if (controlSceneGlobalBloom)
-        {
-            ApplySceneBloom();
-        }
-    }
-
-    private void ApplySceneBloom()
-    {
-        Volume[] volumes = FindObjectsByType<Volume>(FindObjectsSortMode.None);
-        if (volumes == null || volumes.Length == 0) return;
-
-        foreach (Volume vol in volumes)
-        {
-            if (vol == null) continue;
-            VolumeProfile profile = vol.sharedProfile;
-            if (Application.isPlaying && vol.profile != null)
-            {
-                profile = vol.profile;
-            }
-
-            if (profile != null && profile.TryGet(out Bloom bloom))
-            {
-                bloom.intensity.overrideState = true;
-                bloom.intensity.value = sceneBloomIntensity;
-                bloom.scatter.overrideState = true;
-                bloom.scatter.value = sceneBloomScatter;
-            }
         }
     }
 
@@ -1247,57 +1020,34 @@ public class GroundSlashVFX : MonoBehaviour
         Mesh mesh = new Mesh();
         mesh.name = "ChiseledRockSlab";
 
-        // 8 Corner Vertices:
-        // Bottom 4 (wider base)
-        Vector3 b0 = new Vector3(-0.5f, 0.0f, -0.6f);
-        Vector3 b1 = new Vector3( 0.5f, 0.0f, -0.5f);
-        Vector3 b2 = new Vector3( 0.6f, 0.0f,  0.5f);
-        Vector3 b3 = new Vector3(-0.4f, 0.0f,  0.6f);
-
-        // Top 4 (faceted, narrower)
-        Vector3 t0 = new Vector3(-0.35f, 0.5f, -0.35f);
-        Vector3 t1 = new Vector3( 0.35f, 0.45f, -0.3f);
-        Vector3 t2 = new Vector3( 0.4f,  0.55f,  0.35f);
-        Vector3 t3 = new Vector3(-0.3f,  0.5f,   0.4f);
-
-        // Separate vertices for each face to ensure sharp, flat-shaded chiseled normals
-        List<Vector3> verts = new List<Vector3>();
-        List<Vector2> uvs = new List<Vector2>();
-        List<Color> cols = new List<Color>();
-        List<int> tris = new List<int>();
-
-        void AddQuad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Color c0, Color c1, Color c2, Color c3)
+        Vector3[] vertices = new Vector3[]
         {
-            int idx = verts.Count;
-            verts.Add(v0); verts.Add(v1); verts.Add(v2); verts.Add(v3);
-            uvs.Add(new Vector2(0f, 0f)); uvs.Add(new Vector2(1f, 0f));
-            uvs.Add(new Vector2(1f, 1f)); uvs.Add(new Vector2(0f, 1f));
-            cols.Add(c0); cols.Add(c1); cols.Add(c2); cols.Add(c3);
-            tris.Add(idx); tris.Add(idx + 1); tris.Add(idx + 2);
-            tris.Add(idx); tris.Add(idx + 2); tris.Add(idx + 3);
-        }
+            // Bottom face (wider)
+            new Vector3(-0.5f, 0.0f, -0.6f),
+            new Vector3( 0.5f, 0.0f, -0.5f),
+            new Vector3( 0.6f, 0.0f,  0.5f),
+            new Vector3(-0.4f, 0.0f,  0.6f),
 
-        Color molten = new Color(1f, 0.6f, 0.1f, 1f);
-        Color stone = new Color(0f, 0f, 0f, 1f);
+            // Top face (narrower, faceted)
+            new Vector3(-0.35f, 0.5f, -0.35f),
+            new Vector3( 0.35f, 0.45f, -0.3f),
+            new Vector3( 0.4f,  0.55f,  0.35f),
+            new Vector3(-0.3f,  0.5f,   0.4f)
+        };
 
-        // Bottom face (molten underside)
-        AddQuad(b0, b3, b2, b1, molten, molten, molten, molten);
+        int[] triangles = new int[]
+        {
+            0, 2, 1, 0, 3, 2,
+            4, 5, 6, 4, 6, 7,
+            3, 6, 2, 3, 7, 6,
+            0, 1, 5, 0, 5, 4,
+            1, 2, 6, 1, 6, 5,
+            0, 4, 7, 0, 7, 3
+        };
 
-        // Top face (dark charred stone)
-        AddQuad(t0, t1, t2, t3, stone, stone, stone, stone);
-
-        // 4 Side Facets (gradient from bottom molten to top stone)
-        AddQuad(b0, b1, t1, t0, molten, molten, stone, stone); // Front
-        AddQuad(b1, b2, t2, t1, molten, molten, stone, stone); // Right
-        AddQuad(b2, b3, t3, t2, molten, molten, stone, stone); // Back
-        AddQuad(b3, b0, t0, t3, molten, molten, stone, stone); // Left
-
-        mesh.SetVertices(verts);
-        mesh.SetUVs(0, uvs);
-        mesh.SetColors(cols);
-        mesh.SetTriangles(tris, 0);
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
         mesh.RecalculateNormals();
-        mesh.RecalculateTangents();
         mesh.RecalculateBounds();
         return mesh;
     }

@@ -171,23 +171,6 @@ public class HolyGroundRingVFX : MonoBehaviour
     public float LoopInterval { get => loopInterval; set => loopInterval = value; }
 
     // ==========================================
-    //  SELF-CONTAINED MATERIALS & TEXTURES (EXPORT SAFE)
-    // ==========================================
-    [Header("=== Materials & Shaders (Export Safe) ===")]
-    [Tooltip("Pre-configured material for floor sacred seal.")]
-    [SerializeField] private Material floorSealMat;
-
-    [Tooltip("Pre-configured material for vertical sun needles.")]
-    [SerializeField] private Material verticalNeedlesMat;
-
-    [Tooltip("Pre-configured material for rising sparks.")]
-    [SerializeField] private Material sparkMat;
-
-    [Header("=== VFX Textures (Export Safe) ===")]
-    [Tooltip("Spark particle texture.")]
-    [SerializeField] private Texture2D sparkTexture;
-
-    // ==========================================
     //  RUNTIME STATE
     // ==========================================
     private Mesh quadMesh;
@@ -333,18 +316,11 @@ public class HolyGroundRingVFX : MonoBehaviour
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         mr.receiveShadows = false;
 
-        Material floorMat;
-        if (floorSealMat != null)
-        {
-            floorMat = new Material(floorSealMat);
-        }
-        else
-        {
-            Shader ringShader = Shader.Find("VFX/HolyGroundRing");
-            if (ringShader == null)
-                ringShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            floorMat = new Material(ringShader);
-        }
+        Shader ringShader = Shader.Find("VFX/HolyGroundRing");
+        if (ringShader == null)
+            ringShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        Material floorMat = new Material(ringShader);
         floorMat.SetColor("_Color", ringColor);
         floorMat.SetColor("_CoreColor", coreColor);
         floorMat.SetFloat("_Radius", 0.85f);
@@ -361,7 +337,7 @@ public class HolyGroundRingVFX : MonoBehaviour
 
         // 2. VERTICAL SUN NEEDLES (Rising into the air like sunbeams)
         GameObject vertNeedlesGO = null;
-        Material vertNeedlesMatInstance = null;
+        Material vertNeedlesMat = null;
         if (enableVerticalSunNeedles)
         {
             vertNeedlesGO = new GameObject("VerticalSunNeedles_Cage");
@@ -377,25 +353,17 @@ public class HolyGroundRingVFX : MonoBehaviour
             vmr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             vmr.receiveShadows = false;
 
-            if (verticalNeedlesMat != null)
-            {
-                vertNeedlesMatInstance = new Material(verticalNeedlesMat);
-            }
-            else
-            {
-                Shader needleShader = Shader.Find("VFX/VerticalSunNeedles");
-                if (needleShader == null) needleShader = Shader.Find("VFX/HolyGroundRing");
-                if (needleShader == null) needleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-                vertNeedlesMatInstance = new Material(needleShader);
-            }
+            Shader needleShader = Shader.Find("VFX/VerticalSunNeedles");
+            if (needleShader == null) needleShader = ringShader;
 
-            vertNeedlesMatInstance.SetColor("_Color", verticalNeedleColor);
-            vertNeedlesMatInstance.SetColor("_CoreColor", verticalNeedleCoreColor);
-            vertNeedlesMatInstance.SetFloat("_Brightness", brightness * 1.1f);
-            vertNeedlesMatInstance.SetFloat("_NeedleSharpness", 3.0f);
-            vertNeedlesMatInstance.SetFloat("_HeightProgress", 0f); // Hidden until Level 4
-            vertNeedlesMatInstance.SetFloat("_Dissolve", 0f);
-            vmr.material = vertNeedlesMatInstance;
+            vertNeedlesMat = new Material(needleShader);
+            vertNeedlesMat.SetColor("_Color", verticalNeedleColor);
+            vertNeedlesMat.SetColor("_CoreColor", verticalNeedleCoreColor);
+            vertNeedlesMat.SetFloat("_Brightness", brightness * 1.1f);
+            vertNeedlesMat.SetFloat("_NeedleSharpness", 3.0f);
+            vertNeedlesMat.SetFloat("_HeightProgress", 0f); // Hidden until Level 4
+            vertNeedlesMat.SetFloat("_Dissolve", 0f);
+            vmr.material = vertNeedlesMat;
         }
 
         // 3. RISING SPARKS
@@ -455,7 +423,7 @@ public class HolyGroundRingVFX : MonoBehaviour
         if (sparks != null) sparks.Play();
 
         // Shoot up vertical sun needles
-        StartCoroutine(AnimateVerticalNeedlesShoot(vertNeedlesMatInstance));
+        StartCoroutine(AnimateVerticalNeedlesShoot(vertNeedlesMat));
 
         elapsed = 0f;
         while (elapsed < stage4ActivatedDuration)
@@ -499,8 +467,8 @@ public class HolyGroundRingVFX : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / fadeDuration);
             floorMat.SetFloat("_Dissolve", t);
-            if (vertNeedlesMatInstance != null)
-                vertNeedlesMatInstance.SetFloat("_Dissolve", t);
+            if (vertNeedlesMat != null)
+                vertNeedlesMat.SetFloat("_Dissolve", t);
 
             yield return null;
         }
@@ -658,27 +626,15 @@ public class HolyGroundRingVFX : MonoBehaviour
         var renderer = sparksGO.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
 
-        Material instanceSparkMat;
-        if (sparkMat != null)
-        {
-            instanceSparkMat = new Material(sparkMat);
-        }
-        else
-        {
-            Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
-            if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            instanceSparkMat = new Material(sparkShader);
-        }
-        instanceSparkMat.SetColor("_Color", sparkColor);
-        instanceSparkMat.SetFloat("_Brightness", 3.5f);
-        instanceSparkMat.SetFloat("_StarIntensity", 2.0f);
-        instanceSparkMat.SetFloat("_CoreSharpness", 5.0f);
-        if (sparkTexture != null)
-        {
-            instanceSparkMat.SetTexture("_MainTex", sparkTexture);
-            instanceSparkMat.SetTexture("_BaseMap", sparkTexture);
-        }
-        renderer.material = instanceSparkMat;
+        Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
+        if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        Material sparkMat = new Material(sparkShader);
+        sparkMat.SetColor("_Color", sparkColor);
+        sparkMat.SetFloat("_Brightness", 3.5f);
+        sparkMat.SetFloat("_StarIntensity", 2.0f);
+        sparkMat.SetFloat("_CoreSharpness", 5.0f);
+        renderer.material = sparkMat;
 
         return ps;
     }

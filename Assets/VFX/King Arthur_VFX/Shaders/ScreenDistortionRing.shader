@@ -28,7 +28,7 @@ Shader "VFX/ScreenDistortionRing"
         Pass
         {
             Name "ScreenDistortionRing"
-            Blend One One // Pure Additive Shockwave: Immune to missing opaque texture or black artifacts
+            Blend One OneMinusSrcAlpha
             ZWrite Off
             Cull Off
 
@@ -38,6 +38,7 @@ Shader "VFX/ScreenDistortionRing"
             #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
 
             struct Attributes
             {
@@ -50,8 +51,9 @@ Shader "VFX/ScreenDistortionRing"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                float4 screenPos : TEXCOORD1;
                 float4 color : COLOR;
-                float fogFactor : TEXCOORD1;
+                float fogFactor : TEXCOORD2;
             };
 
             CBUFFER_START(UnityPerMaterial)
@@ -69,7 +71,8 @@ Shader "VFX/ScreenDistortionRing"
                 Varyings OUT;
                 OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
                 OUT.uv = IN.uv;
-                OUT.color = any(IN.color) ? IN.color : float4(1, 1, 1, 1);
+                OUT.screenPos = ComputeScreenPos(OUT.positionCS);
+                OUT.color = IN.color;
                 OUT.fogFactor = ComputeFogFactor(OUT.positionCS.z);
                 return OUT;
             }
@@ -80,33 +83,52 @@ Shader "VFX/ScreenDistortionRing"
                 float2 centeredUV = (IN.uv - 0.5) * 2.0;
                 float r = length(centeredUV);
 
-                if (r >= 1.0)
+                if (r > 1.0)
                     return half4(0, 0, 0, 0);
 
                 // Animated shockwave ring expanding
                 float currentR = _Radius;
                 float distFromRing = abs(r - currentR);
 
-                // Wave profile: Gaussian bell curve across shockwave ridge
+                // Wave profile: Gaussian / smooth bell curve across the shockwave ridge
                 float wave = 1.0 - smoothstep(0.0, _RingWidth, distFromRing);
-                wave = pow(saturate(wave), 2.2);
+                wave = pow(saturate(wave), 2.0);
 
                 // Fade out as ring expands and dissolves
-                float lifeFade = saturate(1.0 - _Dissolve) * saturate(1.0 - currentR * 0.85);
-                float wavePower = wave * lifeFade * IN.color.a;
+                float lifeFade = saturate(1.0 - _Dissolve) * saturate(1.0 - currentR * 0.8);
+                float wavePower = wave * lifeFade;
 
                 if (wavePower <= 0.001)
                     return half4(0, 0, 0, 0);
 
-                // Golden radiant rim glow along the shockwave ridge
-                half3 glow = _GlowColor.rgb * (wavePower * _GlowIntensity);
-                glow = MixFog(glow, IN.fogFactor);
+                // Screen coordinates
+                float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
 
-                return half4(glow, wavePower);
+                // Distortion offset directed radially outward along the shockwave gradient
+                float2 normalDir = (r > 0.001) ? (centeredUV / r) : float2(0, 0);
+                float2 distortOffset = normalDir * (wavePower * _DistortionStrength);
+
+                // Sample Opaque Scene Texture with Chromatic Aberration
+                float2 uvR = screenUV + distortOffset * (1.0 + _ChromaticAberration * 5.0);
+                float2 uvG = screenUV + distortOffset;
+                float2 uvB = screenUV + distortOffset * (1.0 - _ChromaticAberration * 5.0);
+
+                half3 sceneCol;
+                sceneCol.r = SampleSceneColor(uvR).r;
+                sceneCol.g = SampleSceneColor(uvG).g;
+                sceneCol.b = SampleSceneColor(uvB).b;
+
+                // Subtle golden rim glow along the leading distortion ridge
+                half3 glow = _GlowColor.rgb * (wavePower * _GlowIntensity * 0.4);
+
+                half3 finalColor = sceneCol + glow;
+                finalColor = MixFog(finalColor, IN.fogFactor);
+
+                return half4(finalColor, wavePower);
             }
             ENDHLSL
         }
     }
 
-    Fallback "Universal Render Pipeline/Particles/Unlit"
+    Fallback Off
 }
