@@ -45,26 +45,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopSpinning: 1
-  spinSpeed: 160
+  ballCount: 1
+  orbitRadius: 0.75
+  ballSize: 0.18
+  spinSpeed: 580
   spinClockwise: 1
-  petalsPerArmRate: 35
-  horizontalSpeed: 9
+  circularFlingAngle: 35
+  inheritCircularForce: 1
+  enableBallTrail: 1
+  ballTrailTime: 0.16
+  enableBallAura: 1
+  centerOffset: {x: 0, y: 0.7, z: 0}
+  petalsPerBallRate: 140
+  horizontalSpeed: 12
   petalSize: 0.28
   petalLifetime: 3.2
   gravityStrength: 0.012
   dragDampen: 0.38
   hoverSpeed: 0.65
   windTurbulence: 0.45
-  centerOffset: {x: 0, y: 0.7, z: 0}
   includeClusters: 1
-  clustersPerArmRate: 10
+  clustersPerBallRate: 32
   includeFloorShockwave: 1
   shockwaveRadius: 3.8
   includeCoreFlash: 1
   bloomIntensity: 4.5
+  ballCoreColor: {r: 3.5, g: 1.2, b: 2.8, a: 1}
   explosionPink: {r: 1, g: 0.35, b: 0.65, a: 1}
   coreMagenta: {r: 0.85, g: 0.15, b: 0.5, a: 1}
   flashWhite: {r: 1, g: 0.95, b: 0.98, a: 1}
+  sphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   singlePetalAddMat: {fileID: 2100000, guid: a20a0001000000000000000000000002, type: 2}
   clusterPetalAddMat: {fileID: 2100000, guid: a20a0001000000000000000000000003, type: 2}
   floralShockwaveMat: {fileID: 2100000, guid: a20a0001000000000000000000000004, type: 2}

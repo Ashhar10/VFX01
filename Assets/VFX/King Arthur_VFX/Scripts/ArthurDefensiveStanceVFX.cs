@@ -228,11 +228,7 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
         if (meshField != null) return meshField;
 #endif
 
-        GameObject tempSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        meshField = tempSphere.GetComponent<MeshFilter>().sharedMesh;
-        if (Application.isPlaying) Destroy(tempSphere);
-        else DestroyImmediate(tempSphere);
-        return meshField;
+        return null;
     }
 
     private Material GetOrLoadMaterial(ref Material matField, string assetPath, string textureName, Color baseColor, Color emissionColor, Vector2? tiling = null)
