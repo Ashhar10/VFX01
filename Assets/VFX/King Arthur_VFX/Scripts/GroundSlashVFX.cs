@@ -230,7 +230,7 @@ public class GroundSlashVFX : MonoBehaviour
     // ==========================================
     [Header("=== Dynamic Ground Lighting (Beneath Slash Path) ===")]
     [Tooltip("Enable subtle dynamic point lights beneath the slash path to illuminate the trench and rock faces.")]
-    [SerializeField] private bool enableGroundPathLights = true;
+    [SerializeField] private bool enableGroundPathLights = false;
 
     [Tooltip("Intensity of the ground path lights.")]
     [SerializeField, Range(0.5f, 10f)] private float groundLightIntensity = 3.5f;
@@ -258,13 +258,33 @@ public class GroundSlashVFX : MonoBehaviour
     private Mesh horizontalQuadMesh;
     private Mesh chiseledRockMesh;
 
-    private Material verticalBladeMat;
-    private Material horizontalWaveMat;
-    private Material groundFissureMat;
-    private Material rockLitMat;
-    private Material sparkMat;
-    private Material vaporMat;
-    private Material distortionRingMat;
+    // ==========================================
+    //  GROUND SLASH MATERIALS & TEXTURES
+    //  Public fields serialize directly into King Arthur.prefab
+    //  so Unity's native package exporter automatically includes all dependencies
+    // ==========================================
+    [Header("=== Materials & Shaders (Export Dependencies) ===")]
+    public Material verticalBladeMat;
+    public Material horizontalWaveMat;
+    public Material groundFissureMat;
+    public Material rockLitMat;
+    public Material sparkMat;
+    public Material vaporMat;
+    public Material distortionRingMat;
+
+    [Header("=== Textures (Export Dependencies) ===")]
+    public Texture2D crescentTexture;
+    public Texture2D sparkTexture;
+    public Texture2D vaporTexture;
+
+    // Runtime instances to prevent asset mutation
+    private Material runtimeVertBladeMat;
+    private Material runtimeHorizWaveMat;
+    private Material runtimeFissureMat;
+    private Material runtimeRockLitMat;
+    private Material runtimeSparkMat;
+    private Material runtimeVaporMat;
+    private Material runtimeDistortMat;
 
     public bool IsPlaying => isPlaying;
 
@@ -273,6 +293,38 @@ public class GroundSlashVFX : MonoBehaviour
         InitializeMeshes();
         InitializeMaterials();
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        LoadDefaultAssets();
+    }
+
+    public void LoadDefaultAssets()
+    {
+        if (verticalBladeMat == null)
+            verticalBladeMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_VerticalBlade_Mat.mat");
+        if (horizontalWaveMat == null)
+            horizontalWaveMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_HorizontalWave_Mat.mat");
+        if (groundFissureMat == null)
+            groundFissureMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_Fissure_Mat.mat");
+        if (rockLitMat == null)
+            rockLitMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_Rock_Mat.mat");
+        if (sparkMat == null)
+            sparkMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_Sparks_Mat.mat");
+        if (vaporMat == null)
+            vaporMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_Vapor_Mat.mat");
+        if (distortionRingMat == null)
+            distortionRingMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/VFX/King Arthur_VFX/Materials/KingArthur_GroundSlash_DistortionRing_Mat.mat");
+
+        if (crescentTexture == null)
+            crescentTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/CrescentSlash.png");
+        if (sparkTexture == null)
+            sparkTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/Spark.png");
+        if (vaporTexture == null)
+            vaporTexture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/VFX/King Arthur_VFX/Textures/SoftCircle.png");
+    }
+#endif
 
     private void OnEnable()
     {
@@ -346,68 +398,128 @@ public class GroundSlashVFX : MonoBehaviour
 
     private void InitializeMaterials()
     {
-        Shader vertShader = Shader.Find("VFX/VerticalCrescent");
-        if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-
-        verticalBladeMat = new Material(vertShader);
-        verticalBladeMat.SetColor("_Color", bladeColor);
-        verticalBladeMat.SetColor("_CoreColor", bladeLeadColor);
-        verticalBladeMat.SetFloat("_Brightness", 3.2f);
-        verticalBladeMat.SetFloat("_Sharpness", 3.5f);
-
-        horizontalWaveMat = new Material(vertShader);
-        horizontalWaveMat.SetColor("_Color", bladeColor);
-        horizontalWaveMat.SetColor("_CoreColor", bladeLeadColor);
-        horizontalWaveMat.SetFloat("_Brightness", 2.8f);
-        horizontalWaveMat.SetFloat("_Sharpness", 2.5f);
-
-        Shader fissureShader = Shader.Find("VFX/GroundFissure");
-        if (fissureShader == null) fissureShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-
-        groundFissureMat = new Material(fissureShader);
-        groundFissureMat.SetColor("_MoltenColor", moltenColor);
-        groundFissureMat.SetColor("_CrustColor", crustColor);
-        groundFissureMat.SetColor("_RockColor", stoneColor);
-        groundFissureMat.SetFloat("_CrackIntensity", 5f);
-        groundFissureMat.SetFloat("_CoreRadius", 0.35f);
-        groundFissureMat.SetFloat("_Brightness", 3.0f);
-
-        Shader litShader = Shader.Find("Universal Render Pipeline/Lit");
-        if (litShader == null) litShader = Shader.Find("Universal Render Pipeline/Simple Lit");
-
-        rockLitMat = new Material(litShader);
-        rockLitMat.SetColor("_BaseColor", stoneColor);
-        rockLitMat.SetFloat("_Smoothness", 0.1f);
-        rockLitMat.SetColor("_EmissionColor", rockMoltenEmission);
-        rockLitMat.EnableKeyword("_EMISSION");
-
-        Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
-        if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-
-        sparkMat = new Material(sparkShader);
-        sparkMat.SetColor("_Color", sparkColor);
-        sparkMat.SetFloat("_Brightness", 3.5f);
-        sparkMat.SetFloat("_StarIntensity", 2.5f);
-        sparkMat.SetFloat("_CoreSharpness", 5f);
-
-        Shader vaporShader = Shader.Find("VFX/SoftHeatSmoke");
-        if (vaporShader == null) vaporShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-
-        vaporMat = new Material(vaporShader);
-        vaporMat.SetColor("_Color", vaporColor);
-        vaporMat.SetFloat("_CoreBrightness", 1.8f);
-        vaporMat.SetFloat("_Softness", 0.6f);
-
-        // Screen Distortion Ring Material
-        Shader distortShader = Shader.Find("VFX/ScreenDistortionRing");
-        if (distortShader != null)
+        // 1. Vertical Blade
+        if (verticalBladeMat != null)
         {
-            distortionRingMat = new Material(distortShader);
-            distortionRingMat.SetFloat("_DistortionStrength", distortionStrength);
-            distortionRingMat.SetFloat("_ChromaticAberration", distortionChromaticAberration);
-            distortionRingMat.SetColor("_GlowColor", distortionRimGlow);
-            distortionRingMat.SetFloat("_GlowIntensity", 1.5f);
-            distortionRingMat.SetFloat("_RingWidth", 0.08f);
+            runtimeVertBladeMat = new Material(verticalBladeMat);
+        }
+        else
+        {
+            Shader vertShader = Shader.Find("VFX/VerticalCrescent");
+            if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            runtimeVertBladeMat = new Material(vertShader);
+            if (crescentTexture != null) runtimeVertBladeMat.mainTexture = crescentTexture;
+        }
+        runtimeVertBladeMat.SetColor("_Color", bladeColor);
+        runtimeVertBladeMat.SetColor("_CoreColor", bladeLeadColor);
+        runtimeVertBladeMat.SetFloat("_Brightness", 3.2f);
+        runtimeVertBladeMat.SetFloat("_Sharpness", 3.5f);
+
+        // 2. Horizontal Wave
+        if (horizontalWaveMat != null)
+        {
+            runtimeHorizWaveMat = new Material(horizontalWaveMat);
+        }
+        else
+        {
+            Shader vertShader = Shader.Find("VFX/VerticalCrescent");
+            if (vertShader == null) vertShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            runtimeHorizWaveMat = new Material(vertShader);
+            if (crescentTexture != null) runtimeHorizWaveMat.mainTexture = crescentTexture;
+        }
+        runtimeHorizWaveMat.SetColor("_Color", bladeColor);
+        runtimeHorizWaveMat.SetColor("_CoreColor", bladeLeadColor);
+        runtimeHorizWaveMat.SetFloat("_Brightness", 2.8f);
+        runtimeHorizWaveMat.SetFloat("_Sharpness", 2.5f);
+
+        // 3. Ground Fissure
+        if (groundFissureMat != null)
+        {
+            runtimeFissureMat = new Material(groundFissureMat);
+        }
+        else
+        {
+            Shader fissureShader = Shader.Find("VFX/GroundFissure");
+            if (fissureShader == null) fissureShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            runtimeFissureMat = new Material(fissureShader);
+        }
+        runtimeFissureMat.SetColor("_MoltenColor", moltenColor);
+        runtimeFissureMat.SetColor("_CrustColor", crustColor);
+        runtimeFissureMat.SetColor("_RockColor", stoneColor);
+        runtimeFissureMat.SetFloat("_CrackIntensity", 5f);
+        runtimeFissureMat.SetFloat("_CoreRadius", 0.35f);
+        runtimeFissureMat.SetFloat("_Brightness", 3.0f);
+
+        // 4. Rock Lit
+        if (rockLitMat != null)
+        {
+            runtimeRockLitMat = new Material(rockLitMat);
+        }
+        else
+        {
+            Shader litShader = Shader.Find("VFX/MoltenRockSlab");
+            if (litShader == null) litShader = Shader.Find("Universal Render Pipeline/Lit");
+            if (litShader == null) litShader = Shader.Find("Universal Render Pipeline/Simple Lit");
+            runtimeRockLitMat = new Material(litShader);
+        }
+        runtimeRockLitMat.SetColor("_BaseColor", stoneColor);
+        runtimeRockLitMat.SetFloat("_Smoothness", 0.1f);
+        runtimeRockLitMat.SetColor("_EmissionColor", rockMoltenEmission);
+        runtimeRockLitMat.EnableKeyword("_EMISSION");
+
+        // 5. Sparks
+        if (sparkMat != null)
+        {
+            runtimeSparkMat = new Material(sparkMat);
+        }
+        else
+        {
+            Shader sparkShader = Shader.Find("VFX/AdditiveParticle");
+            if (sparkShader == null) sparkShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            runtimeSparkMat = new Material(sparkShader);
+            if (sparkTexture != null) runtimeSparkMat.mainTexture = sparkTexture;
+        }
+        runtimeSparkMat.SetColor("_Color", sparkColor);
+        runtimeSparkMat.SetFloat("_Brightness", 3.5f);
+        runtimeSparkMat.SetFloat("_StarIntensity", 2.5f);
+        runtimeSparkMat.SetFloat("_CoreSharpness", 5f);
+
+        // 6. Heat Vapor
+        if (vaporMat != null)
+        {
+            runtimeVaporMat = new Material(vaporMat);
+        }
+        else
+        {
+            Shader vaporShader = Shader.Find("VFX/SoftHeatSmoke");
+            if (vaporShader == null) vaporShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            runtimeVaporMat = new Material(vaporShader);
+            if (vaporTexture != null) runtimeVaporMat.mainTexture = vaporTexture;
+        }
+        runtimeVaporMat.SetColor("_Color", vaporColor);
+        runtimeVaporMat.SetFloat("_CoreBrightness", 1.8f);
+        runtimeVaporMat.SetFloat("_Softness", 0.6f);
+
+        // 7. Screen Distortion Ring
+        if (distortionRingMat != null)
+        {
+            runtimeDistortMat = new Material(distortionRingMat);
+        }
+        else
+        {
+            Shader distortShader = Shader.Find("VFX/ScreenDistortionRing");
+            if (distortShader != null)
+            {
+                runtimeDistortMat = new Material(distortShader);
+            }
+        }
+        if (runtimeDistortMat != null)
+        {
+            runtimeDistortMat.SetFloat("_DistortionStrength", distortionStrength);
+            runtimeDistortMat.SetFloat("_ChromaticAberration", distortionChromaticAberration);
+            runtimeDistortMat.SetColor("_GlowColor", distortionRimGlow);
+            runtimeDistortMat.SetFloat("_GlowIntensity", 1.5f);
+            runtimeDistortMat.SetFloat("_RingWidth", 0.08f);
         }
     }
 
@@ -501,7 +613,7 @@ public class GroundSlashVFX : MonoBehaviour
         if (direction == Vector3.zero) direction = transform.forward;
 
         if (verticalQuadMesh == null) InitializeMeshes();
-        if (verticalBladeMat == null) InitializeMaterials();
+        if (runtimeVertBladeMat == null) InitializeMaterials();
 
         // World Container
         GameObject root = new GameObject("GroundSlash_RunInstance");
@@ -514,7 +626,7 @@ public class GroundSlashVFX : MonoBehaviour
             StartCoroutine(DoCameraShake());
 
         // Screen Distortion / Refraction Ring at impact point
-        if (enableDistortionRing && distortionRingMat != null)
+        if (enableDistortionRing && (runtimeDistortMat != null || distortionRingMat != null))
             StartCoroutine(SpawnDistortionRingRoutine(root.transform, startPos));
 
         // 1. Setup Traveling Leading Wave (Vertical Blade + Horizontal Wave)
@@ -536,7 +648,7 @@ public class GroundSlashVFX : MonoBehaviour
             MeshRenderer mr = vertBladeGO.AddComponent<MeshRenderer>();
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
-            mr.material = verticalBladeMat;
+            mr.material = runtimeVertBladeMat != null ? runtimeVertBladeMat : verticalBladeMat;
         }
 
         if (enableHorizontalWave)
@@ -552,7 +664,7 @@ public class GroundSlashVFX : MonoBehaviour
             MeshRenderer mr = horizWaveGO.AddComponent<MeshRenderer>();
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
-            mr.material = horizontalWaveMat;
+            mr.material = runtimeHorizWaveMat != null ? runtimeHorizWaveMat : horizontalWaveMat;
         }
 
         Light travelLight = null;
@@ -731,7 +843,7 @@ public class GroundSlashVFX : MonoBehaviour
         MeshRenderer mr = node.AddComponent<MeshRenderer>();
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         mr.receiveShadows = false;
-        mr.material = new Material(groundFissureMat);
+        mr.material = new Material(runtimeFissureMat != null ? runtimeFissureMat : groundFissureMat);
 
         return node;
     }
@@ -781,7 +893,7 @@ public class GroundSlashVFX : MonoBehaviour
         MeshRenderer mr = rock.AddComponent<MeshRenderer>();
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         mr.receiveShadows = true;
-        mr.material = rockLitMat;
+        mr.material = runtimeRockLitMat != null ? runtimeRockLitMat : rockLitMat;
 
         StartCoroutine(PopUpRockRoutine(rock, finalPos));
 
@@ -844,7 +956,8 @@ public class GroundSlashVFX : MonoBehaviour
     /// </summary>
     private IEnumerator SpawnDistortionRingRoutine(Transform parent, Vector3 worldPos)
     {
-        if (horizontalQuadMesh == null || distortionRingMat == null) yield break;
+        Material dMat = runtimeDistortMat != null ? runtimeDistortMat : distortionRingMat;
+        if (horizontalQuadMesh == null || dMat == null) yield break;
 
         GameObject ringGO = new GameObject("DistortionRing_Shockwave");
         ringGO.transform.SetParent(parent);
@@ -858,7 +971,7 @@ public class GroundSlashVFX : MonoBehaviour
         MeshRenderer mr = ringGO.AddComponent<MeshRenderer>();
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         mr.receiveShadows = false;
-        Material instanceMat = new Material(distortionRingMat);
+        Material instanceMat = new Material(dMat);
         mr.material = instanceMat;
 
         float elapsed = 0f;
@@ -960,7 +1073,7 @@ public class GroundSlashVFX : MonoBehaviour
 
         var renderer = sparkGO.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
-        renderer.material = sparkMat;
+        renderer.material = runtimeSparkMat != null ? runtimeSparkMat : sparkMat;
 
         return ps;
     }
@@ -1010,7 +1123,7 @@ public class GroundSlashVFX : MonoBehaviour
 
         var renderer = vaporGO.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
-        renderer.material = vaporMat;
+        renderer.material = runtimeVaporMat != null ? runtimeVaporMat : vaporMat;
 
         return ps;
     }
