@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DustMat
-  m_Shader: {fileID: 4800000, guid: bca9fa95dfcf69e4d9029886dad2d5b9, type: 3}
+  m_Name: KingArthur_GroundSlash_VerticalBlade_Mat
+  m_Shader: {fileID: 4800000, guid: eb9f3be02e9d2b841a5afd1fc397ce3a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: 3050
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
@@ -25,15 +25,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: aebb7b9c99a649f43980165a5aacbca7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8c2638cc6ac3f5f4bbc9f1d2d15b3e69, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _CoreBrightness: 1.8
-    - _Dissolve: 0
-    - _Softness: 0.6
+    - _Brightness: 2.08
+    - _Sharpness: 3.5
     m_Colors:
-    - _Color: {r: 1.5, g: 1, b: 0.4, a: 0.25}
+    - _Color: {r: 8, g: 3.5, b: 0.5, a: 1}
+    - _CoreColor: {r: 20, g: 16, b: 8, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

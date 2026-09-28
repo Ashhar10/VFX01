@@ -2,6 +2,7 @@ Shader "VFX/VerticalCrescent"
 {
     Properties
     {
+        _MainTex ("Blade Slash Texture (Optional)", 2D) = "white" {}
         [HDR] _Color ("Energy Color (HDR)", Color) = (16, 7, 1, 1)
         [HDR] _CoreColor ("Leading Blade Edge (HDR)", Color) = (20, 16, 8, 1)
         _Brightness ("Brightness", Range(0.5, 10)) = 3.0
@@ -46,7 +47,11 @@ Shader "VFX/VerticalCrescent"
                 float fogFactor : TEXCOORD1;
             };
 
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
             CBUFFER_START(UnityPerMaterial)
+                float4 _MainTex_ST;
                 half4 _Color;
                 half4 _CoreColor;
                 half _Brightness;
@@ -57,8 +62,8 @@ Shader "VFX/VerticalCrescent"
             {
                 Varyings OUT;
                 OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
-                OUT.uv = IN.uv;
-                OUT.color = IN.color;
+                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
+                OUT.color = any(IN.color) ? IN.color : float4(1, 1, 1, 1);
                 OUT.fogFactor = ComputeFogFactor(OUT.positionCS.z);
                 return OUT;
             }
@@ -70,7 +75,7 @@ Shader "VFX/VerticalCrescent"
 
                 // Crescent arc formula: circle with an offset circular cutout
                 float r = length(uv);
-                if (r > 1.0) return half4(0, 0, 0, 0);
+                if (r >= 1.0) return half4(0, 0, 0, 0);
 
                 // Offset circle to carve out crescent
                 float2 cutCenter = float2(-0.35, 0.0);
@@ -89,12 +94,20 @@ Shader "VFX/VerticalCrescent"
                 float tipTaper = saturate(1.0 - abs(uv.y));
                 tipTaper = pow(tipTaper, 1.5);
 
-                float alpha = crescentShape * tipTaper * IN.color.a;
+                float4 vCol = any(IN.color) ? IN.color : float4(1, 1, 1, 1);
+                float alpha = crescentShape * tipTaper * vCol.a;
+
+                // Multiply texture if assigned (e.g. CrescentSlash.png)
+                half4 texCol = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                alpha *= texCol.a;
+
+                if (alpha <= 0.001)
+                    return half4(0, 0, 0, 0);
 
                 // Color composition
                 half3 coreEmission = _CoreColor.rgb * (leadingEdge * 2.0);
                 half3 bodyEmission = _Color.rgb * crescentShape;
-                half3 finalColor = (coreEmission + bodyEmission) * _Brightness * alpha * IN.color.rgb;
+                half3 finalColor = (coreEmission + bodyEmission) * _Brightness * alpha * vCol.rgb;
 
                 finalColor = MixFog(finalColor, IN.fogFactor);
 

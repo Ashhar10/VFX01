@@ -22,7 +22,7 @@ Shader "VFX/AdditiveParticle"
         Pass
         {
             Name "AdditiveParticle"
-            Blend One One // Additive
+            Blend One One // Pure Additive
             ZWrite Off
             Cull Off
 
@@ -65,7 +65,7 @@ Shader "VFX/AdditiveParticle"
                 Varyings OUT;
                 OUT.positionCS = TransformObjectToHClip(IN.positionOS.xyz);
                 OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
-                OUT.color = IN.color;
+                OUT.color = any(IN.color) ? IN.color : float4(1, 1, 1, 1);
                 OUT.fogFactor = ComputeFogFactor(OUT.positionCS.z);
                 return OUT;
             }
@@ -76,7 +76,10 @@ Shader "VFX/AdditiveParticle"
                 float2 centerUV = (IN.uv - 0.5) * 2.0;
                 float dist = length(centerUV);
 
-                // 1. Soft radial glow (prevents square billboard look completely)
+                if (dist >= 1.0)
+                    return half4(0, 0, 0, 0);
+
+                // 1. Soft radial glow: strictly 0 at dist == 1
                 float radialGlow = saturate(1.0 - dist / max(_GlowRadius, 0.01));
                 radialGlow = radialGlow * radialGlow;
 
@@ -92,9 +95,9 @@ Shader "VFX/AdditiveParticle"
                 // 4. Combined procedural shape
                 float proceduralAlpha = saturate(radialGlow * 0.7 + core * 2.0 + starRays * 0.8);
 
-                // 5. Multiply with texture if it's assigned and non-default
+                // 5. Multiply with texture if assigned (e.g. Spark.png)
                 half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
-                proceduralAlpha *= texColor.a;
+                proceduralAlpha *= texColor.a * (texColor.r * 0.8 + 0.2);
 
                 // 6. Color composition: white-hot core transitioning to rich HDR edge
                 half3 coreColor = half3(1.0, 1.0, 1.0) * (core * 2.0);

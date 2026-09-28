@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DustMat
-  m_Shader: {fileID: 4800000, guid: bca9fa95dfcf69e4d9029886dad2d5b9, type: 3}
+  m_Name: KingArthur_GroundSlash_Sparks_Mat
+  m_Shader: {fileID: 4800000, guid: 39cde567a687fd2469072d5df5d612d5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: 3050
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
@@ -25,15 +25,16 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: aebb7b9c99a649f43980165a5aacbca7, type: 3}
+        m_Texture: {fileID: 2800000, guid: c83b3d1660016784ea8c1847ec7983e7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _CoreBrightness: 1.8
-    - _Dissolve: 0
-    - _Softness: 0.6
+    - _Brightness: 2.2749999
+    - _CoreSharpness: 5
+    - _GlowRadius: 1
+    - _StarIntensity: 2.5
     m_Colors:
-    - _Color: {r: 1.5, g: 1, b: 0.4, a: 0.25}
+    - _Color: {r: 7.5, g: 5, b: 1.25, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
