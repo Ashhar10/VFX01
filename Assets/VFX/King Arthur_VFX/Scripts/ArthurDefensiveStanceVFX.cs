@@ -359,6 +359,12 @@ public class ArthurDefensiveStanceVFX : MonoBehaviour
         fallback.SetColor("_EmissionColor", emissionColor);
         fallback.EnableKeyword("_EMISSION");
         fallback.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        fallback.SetFloat("_Surface", 1f);
+        fallback.SetFloat("_Blend", 2f);
+        fallback.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        fallback.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+        fallback.SetFloat("_ZWrite", 0f);
+        fallback.SetOverrideTag("RenderType", "Transparent");
         fallback.renderQueue = 3010;
         fallback.SetFloat("_Cull", 0f);
 
